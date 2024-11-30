@@ -1,0 +1,14 @@
+../Core/Src/BlockDriver.c:12:6:map_draw	40	static
+../Core/Src/BlockDriver.c:49:6:start_screen	32	static
+../Core/Src/BlockDriver.c:84:6:rng_init	8	static
+../Core/Src/BlockDriver.c:93:6:block_drop	136	static
+../Core/Src/BlockDriver.c:115:9:block_create	224	static
+../Core/Src/BlockDriver.c:313:7:map_init	592	static
+../Core/Src/BlockDriver.c:327:9:rest	744	static
+../Core/Src/BlockDriver.c:426:6:block_rest	704	static
+../Core/Src/BlockDriver.c:483:6:block_rotate	8	static
+../Core/Src/BlockDriver.c:488:6:block_move	152	static
+../Core/Src/BlockDriver.c:546:6:draw_block	24	static
+../Core/Src/BlockDriver.c:554:6:draw_shapes	40	static
+../Core/Src/BlockDriver.c:620:6:draw_tetromino	16	static
+../Core/Src/BlockDriver.c:634:6:clear_tetromino	16	static

@@ -1,0 +1,4 @@
+../Core/Src/game.c:10:6:game_init	5
+../Core/Src/game.c:46:6:game_over	1
+../Core/Src/game.c:51:10:display_time	1
+../Core/Src/game.c:58:6:I2C3_EV_IRQHandler	1

@@ -1,0 +1,9 @@
+../Core/Src/GyroDriver.c:14:6:Gyro_Init	56	static
+../Core/Src/GyroDriver.c:55:9:Gyro_getID	8	static
+../Core/Src/GyroDriver.c:60:6:Gyro_powerOn	8	static
+../Core/Src/GyroDriver.c:65:9:Gyro_getTemp	8	static
+../Core/Src/GyroDriver.c:70:6:Gyro_configReg	16	static
+../Core/Src/GyroDriver.c:89:10:Gyro_readReg	24	static
+../Core/Src/GyroDriver.c:107:6:Gyro_enableSlaveComm	8	static
+../Core/Src/GyroDriver.c:112:6:Gyro_disableSlaveComm	8	static
+../Core/Src/GyroDriver.c:117:6:Gyro_HAL_Status	16	static
