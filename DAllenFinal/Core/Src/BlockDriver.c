@@ -90,26 +90,16 @@ void rng_init()
 	}
 }
 
-void block_drop(block_t *block, map_t *map)
+block_t block_drop(block_t *block)
 {
 	//when timer reaches ARR and enters IRQ handler, call this function
-	//erase current and draw new tetromino
-
-	if(!rest(block, map))
+	volatile block_t temp_tetromino = *block;
+	for(int i = 0; i < 4; i++)
 	{
-		clear_tetromino(*block);
-		volatile block_t temp_tetromino = *block;
-		for(int i = 0; i < 4; i++)
-		{
-			temp_tetromino.y[i] += BLOCK_WIDTH;
-		}
-		*block = temp_tetromino;
-		draw_tetromino(*block);
+		temp_tetromino.y[i] += BLOCK_WIDTH;
 	}
-	else
-	{
-		block_rest(block, map);
-	}
+	*block = temp_tetromino;
+	return temp_tetromino;
 }
 
 block_t block_create(uint8_t num)
@@ -293,8 +283,8 @@ block_t block_create(uint8_t num)
 		uint16_t temp[4][4] =
 			{{0,0,0,0},
 			{0,0,0,0},
-			{0,0,0,0},
-			{1,1,1,1}};
+			{1,1,1,1},
+			{0,0,0,0}};
 		for(int i = 0; i < 4; i++)
 		{
 			for(int j = 0; j < 4; j++)
@@ -304,7 +294,7 @@ block_t block_create(uint8_t num)
 		}
 		for(int i = 0; i < 4; i++)
 		{
-			block.y[i] = BLOCK_START_Y + (i-3)*BLOCK_WIDTH; //BLOCK_START_Y is first coordinate in Y
+			block.y[i] = BLOCK_START_Y + (i-2)*BLOCK_WIDTH; //BLOCK_START_Y is first coordinate in Y
 		}
 	}
 	return block;
@@ -315,11 +305,11 @@ map_t map_init()
 	volatile map_t map = {0};
 	for(int i = 0; i < 10; i++)
 	{
-		map.x[i] = EDGE_WIDTH + i*BLOCK_WIDTH;
+		map.x[i] = LEFT_EDGE + i*BLOCK_WIDTH;
 	}
 	for(int i = 0; i < 13; i++)
 	{
-		map.y[i] = MAP_DIFFERENCE + EDGE_WIDTH + i*BLOCK_WIDTH;
+		map.y[i] = MAP_DIFFERENCE + EDGE_WIDTH + i*BLOCK_WIDTH + 2;
 	}
 	return map;
 }
@@ -366,33 +356,33 @@ uint8_t rest(block_t *block, map_t *map)
 		}
 	}
 
-	uint8_t map_y_min_index[4] = {UINT8_MAX};
-	uint8_t map_x_min_index[4] = {UINT8_MAX};
-	uint16_t map_y_min[4];
-	uint16_t map_x_min[4];
+	uint8_t map_y_min_index[10] = {UINT8_MAX};
+	uint8_t map_x_min_index[10] = {UINT8_MAX};
+	uint16_t map_y_min[10];
+	uint16_t map_x_min[10];
 	for(int i = 0; i < 10; i++)
 	{
 		for(int j = 0; j < 13; j++)
 		{
-			if(temp_map.map_mat[i][j])
+			if(temp_map.map_mat[j][i])
 			{
-				if(j < y_max_index[i])
+				if(map_y_min_index[i] > j)
 				{
 					map_y_min_index[i] = j;
 				}
-				else
-				{
-					map_y_min_index[i] = NO_BLOCK;
-				}
+			}
+			else
+			{
+				map_y_min_index[i] = NO_INDEX;
 			}
 		}
 		map_x_min_index[i] = i;
 	}
 	for(int i = 0; i < 10; i++)
 	{
-		if(map_y_min[i] == NO_BLOCK)
+		if(map_y_min_index[i] == NO_INDEX)
 		{
-			y_max[i] = LCD_PIXEL_HEIGHT;
+			map_y_min[i] = LCD_PIXEL_HEIGHT;
 		}
 		else
 		{
@@ -480,67 +470,258 @@ void block_rest(block_t *block, map_t *map)
 	//draw_tetromino(new);
 }
 
-void block_rotate(block_t block)
+map_t map_update(block_t *block, map_t* map)
 {
-
-}
-
-void block_move(block_t *block, uint8_t dir)
-{
-	clear_tetromino(*block);
-	//dir is 1 if R, 0 if L
-
-	//evaluate the L/R touchpad input
-	//erase current and draw new
-
+	//append the map array with the new blocks in their respective coordinates
+	//create new block
 	volatile block_t temp_tetromino = *block;
+	volatile map_t temp_map = *map;
 
-	//FIND LEFT/RIGHT x COORDINATE OF BLOCK
-	volatile uint8_t max_x_index = 0;
-	volatile uint8_t max_x_val = 0;
-	volatile uint8_t min_x_index = UINT8_MAX;
-	volatile uint8_t min_x_val = 0;
+	uint8_t y_index[4];
+	uint8_t x_index[4];
+	uint16_t y_coor[4];
+	uint16_t x_coor[4];
+	uint8_t ind = 0;
+
 	for(int i = 0; i < 4; i++)
 	{
 		for(int j = 0; j < 4; j++)
 		{
 			if(temp_tetromino.mat[i][j])
 			{
-				if(i > max_x_index)
+				x_index[ind] = i;
+				y_index[ind] = j;
+				ind++;
+			}
+		}
+	}
+
+	for(int i = 0; i < 4; i++)
+	{
+		if(x_index[i]>NO_INDEX && y_index[i]>NO_INDEX)
+		{
+			x_coor[i] = temp_tetromino.x[x_index[i]];
+			y_coor[i] = temp_tetromino.y[y_index[i]];
+		}
+	}
+
+	//get indices for the map coordinates corresponding to the block coordinates
+	//set the map logical matrix, and the color
+	uint8_t index = 0;
+	for(int i = 0; i < 10; i++)
+	{
+		for(int j = 0; j < 13; j++)
+		{
+			if(temp_map.x[i] == x_coor[index] && temp_map.y[j] == y_coor[index])
+			{
+				temp_map.map_mat[j][i] = ON;
+				temp_map.map_color[j][i] = temp_tetromino.color;
+				index++;
+			}
+		}
+	}
+	//*map = temp_map;
+//	for(int i = 0; i < 4; i++)
+//	{
+//		for(int j = 0; j < 4; j++)
+//		{
+//
+//		}
+//	}
+	return temp_map;
+}
+
+block_t block_rotate(block_t *block)
+{
+	block_t temp_block = *block;
+	if(temp_block.name == O)
+	{
+		return temp_block;
+	}
+
+	if(temp_block.name == I)
+	{
+		uint8_t transpose[4][4];
+		for(int i = 0; i < 4; i++)
+		{
+			for(int j = 0; j < 4; j++)
+			{
+				transpose[i][j] = temp_block.mat[j][i];
+			}
+		}
+		for(int i = 0; i < 4; i++)
+		{
+			for(int j = 0; j < 4; j++)
+			{
+				temp_block.mat[i][j] = transpose[i][j];
+			}
+		}
+	}
+
+
+	else if(temp_block.name != O)
+	{
+		uint8_t transpose_3x3[3][3];
+		uint8_t transform[3][3];
+		uint8_t mirror_identity[3][3] =
+		{{0, 0, 1},
+		{0, 1, 0},
+		{1, 0, 0}};
+
+		for(int i = 1; i < 4; i++)
+		{
+			for(int j = 1; j < 4; j++)
+			{
+				transpose_3x3[i-1][j-1] = temp_block.mat[j][i];
+			}
+		}
+
+		for(int k = 0; k < 3; k++)
+		{
+			for(int i = 0; i < 3; i++)
+			{
+				transform[k][i] = 0;
+				for(int j = 0; j < 3; j++)
 				{
-					max_x_index = i;
+					transform[k][i] += (transpose_3x3[k][j] * mirror_identity[j][i]);
 				}
-				if(i < min_x_index)
+			}
+		}
+
+		for(int i = 0; i < 4; i++)
+		{
+			for(int j = 0; j < 4; j++)
+			{
+				if(i == 0 || j == 0)
 				{
-					min_x_index = i;
+					temp_block.mat[i][j] = 0;
+				}
+				else
+				{
+					temp_block.mat[i][j] = transform[i-1][j-1];
 				}
 			}
 		}
 	}
-	max_x_val = temp_tetromino.x[max_x_index];
-	min_x_val = temp_tetromino.x[min_x_index];
+	return temp_block;
+}
+
+uint8_t can_move(block_t *block, map_t *map, uint8_t dir)
+{
+	//dir is 1 if R, 0 if L
+
+	//evaluate the L/R touchpad input
+	//erase current and draw new
+
+	volatile block_t temp_tetromino = *block;
+	volatile map_t temp_map = *map;
+
+	//evaluate the logical AND between the true blocks in block_t and
+	//the next row of map_t (block y_pos + block size)
+	uint16_t y_block[4] = {0};
+	uint16_t x_block[4] = {0};
+	uint8_t ind = 0;
+	for(int j = 0; j < 4; j++)
+	{
+		for(int i = 0; i < 4; i++)
+		{
+			if(temp_tetromino.mat[i][j])
+			{
+				y_block[ind] = temp_tetromino.y[j];
+				x_block[ind] = temp_tetromino.x[i];
+				ind++;
+			}
+		}
+	}
+
+	uint16_t map_points = 0;
+	for(int i = 0; i < 10; i++)
+	{
+		for(int j = 0; j < 13; j++)
+		{
+			if(temp_map.map_mat[j][i])
+			{
+				map_points++;
+			}
+		}
+	}
+	uint8_t map_y_index[map_points];
+	uint8_t map_x_index[map_points];
+	uint16_t map_y[map_points];
+	uint16_t map_x[map_points];
+	uint8_t index = 0;
+	for(int i = 0; i < 10; i++)
+	{
+		for(int j = 0; j < 13; j++)
+		{
+			if(temp_map.map_mat[j][i])
+			{
+				map_x_index[index] = i;
+				map_y_index[index] = j;
+				index++;
+			}
+		}
+	}
+	for(int i = 0; i < map_points; i++)
+	{
+		map_y[i] = temp_map.y[map_y_index[i]];
+		map_x[i] = temp_map.x[map_x_index[i]];
+	}
+
+	uint8_t overlap_map_y_index[4];
+	for(int i = 0; i < 4; i++)
+	{
+		for(int j = 0; j < 13; j++)
+		{
+			if(x_block[i] == map_y[j])
+			{
+				overlap_map_y_index[i] = j;
+			}
+		}
+	}
+
+	for(int i = 0; i < 4; i++)
+	{
+		if(dir)
+		{
+			if(map_x[overlap_map_y_index[i]] == x_block[i] + BLOCK_WIDTH || x_block[i] == RIGHT_EDGE)
+			{
+				return 0;
+			}
+		}
+		else if(!dir)
+		{
+			if(map_x[overlap_map_y_index[i]] == x_block[i] - BLOCK_WIDTH || x_block[i] == LEFT_EDGE)
+			{
+				return 0;
+			}
+		}
+	}
+	return 1;
+}
+
+block_t block_move(block_t *block, map_t *map, uint8_t dir)
+{
+	//when timer reaches ARR and enters IRQ handler, call this function
+	//erase current and draw new tetromino
+	volatile block_t temp_tetromino = *block;
 	if(dir)
 	{
-		if(max_x_val != RIGHT_EDGE)
+		for(int i = 0; i < 4; i++)
 		{
-			for(int i = 0; i < 4; i++)
-			{
-				temp_tetromino.x[i] += BLOCK_WIDTH;
-			}
+			temp_tetromino.x[i] += BLOCK_WIDTH;
 		}
 	}
-	if(!dir)
+	else
 	{
-		if(min_x_val != LEFT_EDGE)
+		for(int i = 0; i < 4; i++)
 		{
-			for(int i = 0; i < 4; i++)
-			{
-				temp_tetromino.x[i] -= BLOCK_WIDTH;
-			}
+			temp_tetromino.x[i] -= BLOCK_WIDTH;
 		}
 	}
+
 	*block = temp_tetromino;
-	draw_tetromino(*block);
+	return temp_tetromino;
 }
 
 void draw_block(uint16_t x, uint16_t y, uint16_t color)

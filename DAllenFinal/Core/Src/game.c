@@ -5,8 +5,8 @@
  *      Author: 17202
  */
 #include "game.h"
-volatile block_t block1, block2;
-volatile map_t map;
+static block_t block;
+static map_t map;
 void game_init()
 {
 	//uint32_t start_time = HAL_GetTick();
@@ -24,22 +24,33 @@ void game_init()
 	LCD_Clear(0,LCD_COLOR_BLACK);
 	map_draw();
 	//rng_init();
-	block1 = block_create(6);
-	draw_tetromino(block1);
+	block = block_create(I);
+	draw_tetromino(block);
 
 	map = map_init();
 	//game_over(start_time);
-	for(int i=0;i<12;i++)
+	for(int i=0;i<5;i++)
 	{
-		HAL_Delay(1000);
-		block_drop(&block1, &map);
+		if(!rest(&block, &map))
+		{
+			HAL_Delay(500);
+			clear_tetromino(block);
+			block = block_drop(&block);
+			draw_tetromino(block);
+		}
+		else
+		{
+			map = map_update(&block, &map);
+			block = block_create(S);
+			draw_tetromino(block);
+		}
 	}
-	block2 = block_create(3);
-	draw_tetromino(block2);
-	for(int i=0;i<11;i++)
+	for(int i=0;i<10;i++)
 	{
-		HAL_Delay(1000);
-		block_drop(&block2, 0);
+			HAL_Delay(500);
+			clear_tetromino(block);
+			block = block_rotate(&block);
+			draw_tetromino(block);
 	}
 }
 

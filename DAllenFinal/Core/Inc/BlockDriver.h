@@ -22,9 +22,13 @@
 #define LEFT_EDGE 6
 #define BOTTOM_ROW 293
 
+#define LEFT 0
+#define RIGHT 1
+
 #define NO_BLOCK 0
 #define ON 1
 #define OFF 0
+#define NO_INDEX -1
 
 #define O 0
 #define L 1
@@ -53,12 +57,14 @@ void map_draw();
 map_t map_init();
 void rng_init();
 void start_screen();
-void block_drop(block_t *block, map_t *map);
+block_t block_drop(block_t *block);
 block_t block_create(uint8_t num);
 uint8_t rest(block_t *block, map_t *map);
 void block_rest(block_t *block, map_t *map);
-void block_rotate(block_t block);
-void block_move(block_t *block, uint8_t dir);
+map_t map_update(block_t *block, map_t* map);
+block_t block_rotate(block_t *block);
+block_t block_move(block_t *block, map_t *map, uint8_t dir);
+uint8_t can_move(block_t *block, map_t *map, uint8_t dir);
 void draw_block(uint16_t x, uint16_t y, uint16_t color);
 void draw_shapes();
 void draw_tetromino(block_t block);
