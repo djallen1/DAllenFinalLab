@@ -1,4 +1,7 @@
-../Core/Src/game.c:10:6:game_init	8
-../Core/Src/game.c:57:6:game_over	1
-../Core/Src/game.c:62:10:display_time	1
-../Core/Src/game.c:69:6:I2C3_EV_IRQHandler	1
+../Core/Src/game.c:10:6:game_init	2
+../Core/Src/game.c:44:6:game_over	1
+../Core/Src/game.c:52:10:display_time	1
+../Core/Src/game.c:59:6:game_drop	4
+../Core/Src/game.c:76:6:game_rotate	2
+../Core/Src/game.c:84:6:game_move	2
+../Core/Src/game.c:91:6:I2C3_EV_IRQHandler	1

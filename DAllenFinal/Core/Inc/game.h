@@ -12,6 +12,9 @@
 
 void game_init();
 void game_over();
+void game_drop();
+void game_rotate();
+void game_move(uint8_t dir);
 uint32_t display_time(uint32_t start_time);
 
 #endif /* INC_GAME_H_ */

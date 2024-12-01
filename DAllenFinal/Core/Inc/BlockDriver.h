@@ -54,19 +54,20 @@ typedef struct{
 }map_t;
 
 void map_draw();
-map_t map_init();
 void rng_init();
 void start_screen();
+void draw_shapes();
+void end_screen();
+void disp_time(uint32_t time);
 block_t block_drop(block_t *block);
 block_t block_create(uint8_t num);
 uint8_t rest(block_t *block, map_t *map);
-void block_rest(block_t *block, map_t *map);
+map_t map_init();
 map_t map_update(block_t *block, map_t* map);
 block_t block_rotate(block_t *block);
 block_t block_move(block_t *block, map_t *map, uint8_t dir);
 uint8_t can_move(block_t *block, map_t *map, uint8_t dir);
 void draw_block(uint16_t x, uint16_t y, uint16_t color);
-void draw_shapes();
 void draw_tetromino(block_t block);
 void clear_tetromino(block_t block);
 
