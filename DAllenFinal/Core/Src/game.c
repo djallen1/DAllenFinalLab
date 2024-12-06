@@ -30,15 +30,11 @@ void game_init()
 
 	map = map_init();
 	//game_over(start_time);
-//	for(int i=0;i<5;i++)
-//	{
-//
-//	}
-//	for(int i=0;i<10;i++)
-//	{
-//
-//	}
-	game_over(start_time);
+	while(!is_game_over(map))
+	{
+		game_drop();
+	}
+	game_over();
 }
 
 void game_over(uint32_t start_time)
@@ -75,7 +71,7 @@ void game_drop()
 
 void game_rotate()
 {
-	HAL_Delay(500);
+	//HAL_Delay(500);
 	clear_tetromino(block);
 	block = block_rotate(&block);
 	draw_tetromino(block);
@@ -83,9 +79,12 @@ void game_rotate()
 
 void game_move(uint8_t dir)
 {
-	clear_tetromino(block);
-	block = block_move(&block, &map, dir);
-	draw_tetromino(block);
+	if(can_move(&block, &map, dir))
+	{
+		clear_tetromino(block);
+		block = block_move(&block, &map, dir);
+		draw_tetromino(block);
+	}
 }
 
 void I2C3_EV_IRQHandler()

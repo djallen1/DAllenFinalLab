@@ -1,3 +1,6 @@
 ../Core/Src/ApplicationCode.c:23:6:ApplicationInit	1
-../Core/Src/ApplicationCode.c:44:6:LCD_Visual_Demo	1
-../Core/Src/ApplicationCode.c:49:6:Application_game_inst	1
+../Core/Src/ApplicationCode.c:44:6:Application_game_inst	1
+../Core/Src/ApplicationCode.c:52:6:LCDTouchScreenInterruptGPIOInit	1
+../Core/Src/ApplicationCode.c:77:6:EXTI15_10_IRQHandler	5
+../Core/Src/ApplicationCode.c:143:6:applicationButtonInit	1
+../Core/Src/ApplicationCode.c:148:6:EXTI0_IRQHandler	1

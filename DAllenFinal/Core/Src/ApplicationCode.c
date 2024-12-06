@@ -37,37 +37,14 @@ void ApplicationInit(void)
 	#if TOUCH_INTERRUPT_ENABLED == 1
 	LCDTouchScreenInterruptGPIOInit();
 	#endif // TOUCH_INTERRUPT_ENABLED
-
 	#endif // COMPILE_TOUCH_FUNCTIONS
-}
-
-void LCD_Visual_Demo(void)
-{
-	//visualDemo();
+	applicationButtonInit();
 }
 
 void Application_game_inst(void)
 {
 	game_init();
 }
-#if COMPILE_TOUCH_FUNCTIONS == 1
-void LCD_Touch_Polling_Demo(void)
-{
-	LCD_Clear(0,LCD_COLOR_GREEN);
-	while (1) {
-		/* If touch pressed */
-		if (returnTouchStateAndLocation(&StaticTouchData) == STMPE811_State_Pressed) {
-			/* Touch valid */
-			printf("\nX: %03d\nY: %03d\n", StaticTouchData.x, StaticTouchData.y);
-			LCD_Clear(0, LCD_COLOR_RED);
-		} else {
-			/* Touch not pressed */
-			printf("Not Pressed\n\n");
-			LCD_Clear(0, LCD_COLOR_GREEN);
-		}
-	}
-}
-
 
 // TouchScreen Interrupt
 #if TOUCH_INTERRUPT_ENABLED == 1
@@ -126,18 +103,25 @@ void EXTI15_10_IRQHandler()
 	// Determine if it is pressed or unpressed
 	if(isTouchDetected) // Touch has been detected
 	{
-		printf("\nPressed");
+		//printf("\nPressed");
 		// May need to do numerous retries? 
 		DetermineTouchPosition(&StaticTouchData);
 		/* Touch valid */
-		printf("\nX: %03d\nY: %03d \n", StaticTouchData.x, StaticTouchData.y);
-		LCD_Clear(0, LCD_COLOR_RED);
+		//printf("\nX: %03d\nY: %03d \n", StaticTouchData.x, StaticTouchData.y);
+		if(StaticTouchData.x > 120)
+		{
+			game_move(RIGHT);
+		}
+		else
+		{
+			game_move(LEFT);
+		}
+		//LCD_Clear(0, LCD_COLOR_RED);
 
 	}else{
-
 		/* Touch not pressed */
-		printf("\nNot pressed \n");
-		LCD_Clear(0, LCD_COLOR_GREEN);
+//		printf("\nNot pressed \n");
+//		LCD_Clear(0, LCD_COLOR_GREEN);
 	}
 
 	STMPE811_Write(STMPE811_FIFO_STA, 0x01);
@@ -155,5 +139,19 @@ void EXTI15_10_IRQHandler()
 
 }
 #endif // TOUCH_INTERRUPT_ENABLED
-#endif // COMPILE_TOUCH_FUNCTIONS
+
+void applicationButtonInit()
+{
+	ButtonInit();
+}
+
+void EXTI0_IRQHandler()
+{
+	HAL_NVIC_DisableIRQ(EXTI0_IRQn);
+	//EXTI_HandleTypeDef* line = {0};
+	HAL_EXTI_ClearPending(EXTI_GPIOA, EXTI_TRIGGER_RISING);
+	//IRQ_enable(EXTI0_IRQ_NUMBER);
+	game_rotate();
+	HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+}
 

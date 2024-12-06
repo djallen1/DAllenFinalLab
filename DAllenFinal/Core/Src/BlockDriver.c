@@ -98,19 +98,28 @@ void disp_time(uint32_t time)
 {
 	uint32_t seconds = time / 1000;
 	uint32_t min = 0;
+	uint32_t sec_tens = 0;
 	while(seconds > 60)
 	{
 		seconds -= 60;
 		min++;
 	}
-	char sec_char = (char)seconds;
-	char min_char = (char)min;
+	while(seconds > 10)
+	{
+		seconds -= 10;
+		sec_tens++;
+	}
+
+	uint32_t sec_char = seconds + '0';
+	uint32_t sec_tens_char = sec_tens + '0';
+	uint32_t min_char = min + '0';
 
 	LCD_SetFont(&Font12x12);
 	LCD_SetTextColor(LCD_COLOR_WHITE);
-	LCD_DisplayChar(80, 160, min_char);
-	LCD_DisplayChar(120, 160, ':');
-	LCD_DisplayChar(125, 160, sec_char);
+	LCD_DisplayChar(100, 160, min_char);
+	LCD_DisplayChar(114, 160, ':');
+	LCD_DisplayChar(124, 160, sec_tens_char);
+	LCD_DisplayChar(138, 160, sec_char);
 
 }
 
@@ -131,7 +140,7 @@ block_t block_drop(block_t *block)
 	{
 		temp_tetromino.y[i] += BLOCK_WIDTH;
 	}
-	*block = temp_tetromino;
+	//*block = temp_tetromino;
 	return temp_tetromino;
 }
 
@@ -794,4 +803,16 @@ void clear_tetromino(block_t block)
 			}
 		}
 	}
+}
+
+uint8_t is_game_over(map_t map)
+{
+	for(int i = 0; i< 10; i++)
+	{
+		if(map.map_mat[0][i])
+		{
+			return 1;
+		}
+	}
+	return 0;
 }

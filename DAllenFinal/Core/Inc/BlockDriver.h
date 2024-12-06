@@ -53,6 +53,7 @@ typedef struct{
 	uint16_t y[13];
 }map_t;
 
+uint8_t is_game_over(map_t map);
 void map_draw();
 void rng_init();
 void start_screen();

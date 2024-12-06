@@ -8,6 +8,7 @@
 #include "LCD_Driver.h"
 #include "stm32f4xx_hal.h"
 #include "game.h"
+#include "Button_Driver.h"
 
 #include <stdio.h>
 
@@ -16,8 +17,8 @@
 #define INC_APPLICATIONCODE_H_
 
 void ApplicationInit(void);
-void LCD_Visual_Demo(void);
 void Application_game_inst(void);
+void applicationButtonInit();
 
 #if (COMPILE_TOUCH_FUNCTIONS == 1) && (COMPILE_TOUCH_INTERRUPT_SUPPORT == 0)
 void LCD_Touch_Polling_Demo(void);
