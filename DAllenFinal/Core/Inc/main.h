@@ -28,6 +28,7 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
+#include "Scheduler.h"
 #include "ApplicationCode.h"
 
 /* Private includes ----------------------------------------------------------*/

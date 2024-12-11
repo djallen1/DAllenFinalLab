@@ -6,7 +6,10 @@
  */
 #include "BlockDriver.h"
 
-static RNG_HandleTypeDef *hrng;
+static RNG_HandleTypeDef hrng;
+
+static void MX_RNG_Init(void);
+static void MX_RNG_Deinit(void);
 
 void map_draw()
 {
@@ -123,15 +126,6 @@ void disp_time(uint32_t time)
 
 }
 
-void rng_init()
-{
-	hrng->Instance = RNG;
-	if(HAL_RNG_Init(hrng) != HAL_OK)
-	{
-		APPLICATION_ASSERT(1);
-	}
-}
-
 block_t block_drop(block_t *block)
 {
 	//when timer reaches ARR and enters IRQ handler, call this function
@@ -144,8 +138,9 @@ block_t block_drop(block_t *block)
 	return temp_tetromino;
 }
 
-block_t block_create(uint8_t num)
+block_t block_create()
 {
+	MX_RNG_Init();
 	volatile block_t block = {0};
 	//evaluate rng -> determine block char
 	//determine block matrix corresponding to block char
@@ -153,14 +148,15 @@ block_t block_create(uint8_t num)
 	//set pos_x, pos_y
 	//return the block
 
-	//uint32_t rand = HAL_RNG_GetRandomNumber(hrng);
-	uint32_t rand = num;
-	uint8_t name = rand & 0b111;
+	uint32_t rand;
+	HAL_RNG_GenerateRandomNumber(&hrng, &rand);
+	rand %= 7;
+	MX_RNG_Deinit();
+
+	uint8_t name = rand;
 		block.name = name;
 
-	//uint32_t rando = HAL_RNG_GetRandomNumber(hrng);
-	uint32_t rando = num;
-	uint8_t color = rando & 0b111;
+	uint8_t color = rand;
 
 	//COLOR
 	if(color == BLUE)
@@ -306,8 +302,8 @@ block_t block_create(uint8_t num)
 		uint16_t temp[4][4] =
 			{{0,0,0,0},
 			{0,0,0,0},
-			{0,1,1,1},
-			{0,0,1,0}};
+			{0,0,1,0},
+			{0,1,1,1}};
 		for(int i = 0; i < 4; i++)
 		{
 			for(int j = 0; j < 4; j++)
@@ -325,8 +321,8 @@ block_t block_create(uint8_t num)
 		uint16_t temp[4][4] =
 			{{0,0,0,0},
 			{0,0,0,0},
-			{1,1,1,1},
-			{0,0,0,0}};
+			{0,0,0,0},
+			{1,1,1,1}};
 		for(int i = 0; i < 4; i++)
 		{
 			for(int j = 0; j < 4; j++)
@@ -406,7 +402,7 @@ uint8_t rest(block_t *block, map_t *map)
 	{
 		for(int j = 0; j < 13; j++)
 		{
-			if(temp_map.map_mat[j][i])
+			if(temp_map.map_mat[i][j])
 			{
 				if(map_y_min_index[i] > j)
 				{
@@ -445,13 +441,25 @@ uint8_t rest(block_t *block, map_t *map)
 		}
 	}
 
-	for(int i = 0; i < 4; i++)
-	{
-		if(map_y_min[overlap_map_x_index[i]] == y_max[i] + BLOCK_WIDTH || y_max[i] == BOTTOM_ROW)
+//	for(int i = 0; i < 4; i++)
+//	{
+		if(map_y_min[overlap_map_x_index[0]] == y_max[0] + BLOCK_WIDTH || y_max[0] == BOTTOM_ROW)
 		{
 			return 1;
 		}
-	}
+		else if(map_y_min[overlap_map_x_index[1]] == y_max[1] + BLOCK_WIDTH || y_max[1] == BOTTOM_ROW)
+		{
+			return 1;
+		}
+		else if(map_y_min[overlap_map_x_index[2]] == y_max[2] + BLOCK_WIDTH || y_max[2] == BOTTOM_ROW)
+		{
+			return 1;
+		}
+		else if(map_y_min[overlap_map_x_index[3]] == y_max[3] + BLOCK_WIDTH || y_max[3] == BOTTOM_ROW)
+		{
+			return 1;
+		}
+//	}
 	return 0;
 }
 
@@ -480,7 +488,6 @@ map_t map_update(block_t *block, map_t* map)
 			}
 		}
 	}
-
 	for(int i = 0; i < 4; i++)
 	{
 		if(x_index[i]>NO_INDEX && y_index[i]>NO_INDEX)
@@ -499,20 +506,13 @@ map_t map_update(block_t *block, map_t* map)
 		{
 			if(temp_map.x[i] == x_coor[index] && temp_map.y[j] == y_coor[index])
 			{
-				temp_map.map_mat[j][i] = ON;
-				temp_map.map_color[j][i] = temp_tetromino.color;
+				temp_map.map_mat[i][j] = ON;
+				temp_map.map_color[i][j] = temp_tetromino.color;
 				index++;
 			}
 		}
 	}
-	//*map = temp_map;
-//	for(int i = 0; i < 4; i++)
-//	{
-//		for(int j = 0; j < 4; j++)
-//		{
-//
-//		}
-//	}
+
 	return temp_map;
 }
 
@@ -624,7 +624,7 @@ uint8_t can_move(block_t *block, map_t *map, uint8_t dir)
 	{
 		for(int j = 0; j < 13; j++)
 		{
-			if(temp_map.map_mat[j][i])
+			if(temp_map.map_mat[i][j])
 			{
 				map_points++;
 			}
@@ -639,7 +639,7 @@ uint8_t can_move(block_t *block, map_t *map, uint8_t dir)
 	{
 		for(int j = 0; j < 13; j++)
 		{
-			if(temp_map.map_mat[j][i])
+			if(temp_map.map_mat[i][j])
 			{
 				map_x_index[index] = i;
 				map_y_index[index] = j;
@@ -805,14 +805,73 @@ void clear_tetromino(block_t block)
 	}
 }
 
-uint8_t is_game_over(map_t map)
+uint8_t can_spawn(block_t *block, map_t *map)
 {
-	for(int i = 0; i< 10; i++)
+	volatile block_t temp_tetromino = *block;
+	volatile map_t temp_map = *map;
+
+	uint16_t block_x[4];
+	uint16_t block_y[4];
+	uint8_t ind = 0;
+
+	for(int i = 0; i < 4; i++)
 	{
-		if(map.map_mat[0][i])
+		for(int j = 0; j < 4; j++)
 		{
-			return 1;
+			if(temp_tetromino.mat[i][j])
+			{
+				block_x[ind] = temp_tetromino.x[i];
+				block_y[ind] = temp_tetromino.y[j];
+				ind++;
+			}
 		}
 	}
-	return 0;
+
+	//iterate through the columns in the first 3 rows of the map, and if overlap, return 0
+	for(int i = 3; i < 7; i++)
+	{
+		for(int j = 0; j < 3; j++)
+		{
+			if(temp_map.map_mat[i][j])
+			{
+				if(temp_map.x[i] == block_x[0] && temp_map.y[j] == block_y[0])
+				{
+					return 0;
+				}
+				else if(temp_map.x[i] == block_x[1] && temp_map.y[j] == block_y[1])
+				{
+					return 0;
+				}
+				else if(temp_map.x[i] == block_x[2] && temp_map.y[j] == block_y[2])
+				{
+					return 0;
+				}
+				else if(temp_map.x[i] == block_x[3] && temp_map.y[j] == block_y[3])
+				{
+					return 0;
+				}
+			}
+		}
+	}
+	return 1;
+}
+
+static void MX_RNG_Init(void)
+{
+  __HAL_RCC_RNG_CLK_ENABLE();
+  hrng.Instance = RNG;
+  if (HAL_RNG_Init(&hrng) != HAL_OK)
+  {
+	  APPLICATION_ASSERT(1);
+  }
+}
+
+static void MX_RNG_Deinit(void)
+{
+  __HAL_RCC_RNG_CLK_DISABLE();
+  hrng.Instance = RNG;
+  if (HAL_RNG_Init(&hrng) != HAL_OK)
+  {
+	  APPLICATION_ASSERT(1);
+  }
 }

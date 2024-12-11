@@ -1,6 +1,9 @@
-../Core/Src/ApplicationCode.c:23:6:ApplicationInit	1
-../Core/Src/ApplicationCode.c:44:6:Application_game_inst	1
-../Core/Src/ApplicationCode.c:52:6:LCDTouchScreenInterruptGPIOInit	1
-../Core/Src/ApplicationCode.c:77:6:EXTI15_10_IRQHandler	5
-../Core/Src/ApplicationCode.c:143:6:applicationButtonInit	1
-../Core/Src/ApplicationCode.c:148:6:EXTI0_IRQHandler	1
+../Core/Src/ApplicationCode.c:25:6:ApplicationInit	1
+../Core/Src/ApplicationCode.c:47:6:Application_game_inst	1
+../Core/Src/ApplicationCode.c:56:6:LCDTouchScreenInterruptGPIOInit	1
+../Core/Src/ApplicationCode.c:81:6:EXTI15_10_IRQHandler	7
+../Core/Src/ApplicationCode.c:151:6:applicationButtonInit	1
+../Core/Src/ApplicationCode.c:156:6:EXTI0_IRQHandler	1
+../Core/Src/ApplicationCode.c:166:13:MX_TIM7_Init	3
+../Core/Src/ApplicationCode.c:199:6:TIM7_IRQHandler	2
+../Core/Src/ApplicationCode.c:214:6:start_timer	1

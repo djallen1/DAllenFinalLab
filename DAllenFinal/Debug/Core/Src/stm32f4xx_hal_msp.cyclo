@@ -7,5 +7,5 @@
 ../Core/Src/stm32f4xx_hal_msp.c:375:6:HAL_RNG_MspDeInit	2
 ../Core/Src/stm32f4xx_hal_msp.c:397:6:HAL_SPI_MspInit	2
 ../Core/Src/stm32f4xx_hal_msp.c:435:6:HAL_SPI_MspDeInit	2
-../Core/Src/stm32f4xx_hal_msp.c:465:6:HAL_TIM_Base_MspInit	3
-../Core/Src/stm32f4xx_hal_msp.c:498:6:HAL_TIM_Base_MspDeInit	3
+../Core/Src/stm32f4xx_hal_msp.c:465:6:HAL_TIM_Base_MspInit	2
+../Core/Src/stm32f4xx_hal_msp.c:488:6:HAL_TIM_Base_MspDeInit	2

@@ -250,8 +250,8 @@ void STMPE811_DetermineTouchPosition(STMPE811_TouchData * data)
 
 bool isSTMPE811_Ready(void)
 {
-    HAL_StatusTypeDef status;
-    status = HAL_I2C_IsDeviceReady(&hI2C3, STMPE811_ADDRESS, 5, DEFAULT_TESTING_TIMEOUT);
+    HAL_StatusTypeDef status = {0};
+    //status = HAL_I2C_IsDeviceReady(&hI2C3, STMPE811_ADDRESS, 5, DEFAULT_TESTING_TIMEOUT);
     if(status != HAL_OK)
     {
         return false;
@@ -350,7 +350,7 @@ void I2C3_Write(uint16_t devAddr, uint8_t reg, uint8_t data)
     uint8_t dataConversion = data; // data will be a raw hex value this is mainly for debugging...
     // Learning topic - Is this needed? Or can I just use &data in the function call? 
     HAL_status = HAL_I2C_Mem_Write(&hI2C3, devAddr, reg, I2C_MEMADD_SIZE_8BIT, &dataConversion, ONEBYTE, DEFAULT_TESTING_TIMEOUT);
-    verifyHAL_I2C_IS_OKAY();
+    //verifyHAL_I2C_IS_OKAY();
 }
 
 // This function should only be used for single BYTE transfers 
@@ -358,7 +358,7 @@ void I2C3_Read(uint8_t address, uint8_t reg, uint8_t * rxData)
 {
     // Need to use MEM functions
     HAL_status = HAL_I2C_Mem_Read(&hI2C3, address, reg, I2C_MEMADD_SIZE_8BIT, rxData, ONEBYTE, DEFAULT_TESTING_TIMEOUT);
-    verifyHAL_I2C_IS_OKAY();
+    //verifyHAL_I2C_IS_OKAY();
 }
 
 // This function should be used for multiple byte reads from a reg

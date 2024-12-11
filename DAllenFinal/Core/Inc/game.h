@@ -10,6 +10,11 @@
 
 #include "BlockDriver.h"
 
+#define STARTED 1
+#define NOT_STARTED 0
+
+void game_start_screen();
+uint8_t is_start_screen();
 void game_init();
 void game_over();
 void game_drop();

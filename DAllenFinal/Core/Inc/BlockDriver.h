@@ -47,13 +47,13 @@ typedef struct{
 }block_t;
 
 typedef struct{
-	uint16_t map_color[13][10];
-	uint16_t map_mat[13][10];
+	uint16_t map_color[10][13];
+	uint16_t map_mat[10][13];
 	uint16_t x[10];
 	uint16_t y[13];
 }map_t;
 
-uint8_t is_game_over(map_t map);
+uint8_t can_spawn(block_t *block, map_t *map);
 void map_draw();
 void rng_init();
 void start_screen();
@@ -61,7 +61,7 @@ void draw_shapes();
 void end_screen();
 void disp_time(uint32_t time);
 block_t block_drop(block_t *block);
-block_t block_create(uint8_t num);
+block_t block_create();
 uint8_t rest(block_t *block, map_t *map);
 map_t map_init();
 map_t map_update(block_t *block, map_t* map);

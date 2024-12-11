@@ -7,9 +7,11 @@
 
 #include "ApplicationCode.h"
 
+TIM_HandleTypeDef htim7;
+
+static void MX_TIM7_Init(void);
+
 /* Static variables */
-
-
 extern void initialise_monitor_handles(void); 
 
 #if COMPILE_TOUCH_FUNCTIONS == 1
@@ -39,11 +41,13 @@ void ApplicationInit(void)
 	#endif // TOUCH_INTERRUPT_ENABLED
 	#endif // COMPILE_TOUCH_FUNCTIONS
 	applicationButtonInit();
+	game_start_screen();
 }
 
 void Application_game_inst(void)
 {
 	game_init();
+	start_timer();
 }
 
 // TouchScreen Interrupt
@@ -103,12 +107,16 @@ void EXTI15_10_IRQHandler()
 	// Determine if it is pressed or unpressed
 	if(isTouchDetected) // Touch has been detected
 	{
+		if(is_start_screen())
+		{
+			Application_game_inst();
+		}
 		//printf("\nPressed");
 		// May need to do numerous retries? 
 		DetermineTouchPosition(&StaticTouchData);
 		/* Touch valid */
 		//printf("\nX: %03d\nY: %03d \n", StaticTouchData.x, StaticTouchData.y);
-		if(StaticTouchData.x > 120)
+		if(StaticTouchData.x > 120 && !is_start_screen())
 		{
 			game_move(RIGHT);
 		}
@@ -153,5 +161,63 @@ void EXTI0_IRQHandler()
 	//IRQ_enable(EXTI0_IRQ_NUMBER);
 	game_rotate();
 	HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+}
+
+static void MX_TIM7_Init(void)
+{
+
+  /* USER CODE BEGIN TIM7_Init 0 */
+
+  /* USER CODE END TIM7_Init 0 */
+
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  /* USER CODE BEGIN TIM7_Init 1 */
+
+  /* USER CODE END TIM7_Init 1 */
+  htim7.Instance = TIM7;
+  htim7.Init.Prescaler = PRESCALAR_VAL;
+  htim7.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim7.Init.Period = ARR_VAL;
+  htim7.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim7) != HAL_OK)
+  {
+    APPLICATION_ASSERT(1);
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim7, &sMasterConfig) != HAL_OK)
+  {
+	APPLICATION_ASSERT(1);
+  }
+  /* USER CODE BEGIN TIM7_Init 2 */
+
+  /* USER CODE END TIM7_Init 2 */
+
+}
+
+void TIM7_IRQHandler(void)
+{
+	HAL_NVIC_DisableIRQ(TIM7_IRQn);
+	__HAL_TIM_CLEAR_FLAG(&htim7, TIM_FLAG_UPDATE);
+	if(!game_finished())
+	{
+		game_drop();
+	}
+	else
+	{
+		game_over();
+	}
+	HAL_NVIC_EnableIRQ(TIM7_IRQn);
+}
+
+void start_timer()
+{
+	MX_TIM7_Init();
+	__HAL_TIM_CLEAR_FLAG(&htim7, TIM_FLAG_UPDATE);
+	HAL_NVIC_EnableIRQ(TIM7_IRQn);
+	HAL_TIM_Base_Start_IT(&htim7);
+	//((&htim7)->Instance->SR) |= 0;
+	//__HAL_TIM_CLEAR_FLAG(&htim7, TIM_FLAG_UPDATE);
 }
 
