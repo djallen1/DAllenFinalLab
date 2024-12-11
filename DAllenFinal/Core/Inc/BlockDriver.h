@@ -58,6 +58,8 @@ void draw_shapes();
 void draw_block(uint16_t x, uint16_t y, uint16_t color);
 void draw_tetromino(block_t block);
 void clear_tetromino(block_t block);
+void draw_updated_map(map_t map);
+void clear_map(map_t map);
 void end_screen();
 void disp_time(uint32_t time);
 
@@ -68,8 +70,10 @@ block_t block_move(block_t *block, map_t *map, uint8_t dir);
 
 uint8_t collision(block_t *block, map_t* map, uint8_t dir);
 uint8_t can_spawn(block_t *block, map_t *map);
+uint8_t num_levels_cleared(map_t *map);
 
 map_t map_init();
 map_t map_update(block_t *block, map_t* map);
+map_t level_clear(map_t *map);
 
 #endif /* INC_BLOCKDRIVER_H_ */

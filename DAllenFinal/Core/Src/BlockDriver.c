@@ -514,6 +514,97 @@ map_t map_update(block_t *block, map_t* map)
 	return temp_map;
 }
 
+uint8_t num_levels_cleared(map_t *map)
+{
+	volatile map_t temp_map = *map;
+
+	uint8_t n = 0;
+	for(int j = 0; j < 13; j++)
+	{
+		volatile uint8_t sum = 0;
+		for(int i = 0; i < 10; i++)
+		{
+			sum += temp_map.map_mat[i][j];
+			if(sum == 10)
+			{
+				n++;
+			}
+		}
+	}
+	return n;
+}
+
+map_t level_clear(map_t *map)
+{
+	volatile map_t temp_map = *map;
+
+	uint8_t n = 0;
+	volatile uint8_t row_ind_cleared[4];
+	for(int j = 0; j < 13; j++)
+	{
+		volatile uint8_t sum = 0;
+		for(int i = 0; i < 10; i++)
+		{
+			sum += temp_map.map_mat[i][j];
+			if(sum == 10)
+			{
+				row_ind_cleared[n] = j;
+				n++;
+			}
+		}
+	}
+
+	for(int k = 0; k < n; k++)
+	{
+		for(int j = 12; j >= 0; j--)
+		{
+			for(int i = 0; i < 10; i++)
+			{
+				if(j <= row_ind_cleared[k] && j > 0)
+				{
+					volatile uint8_t l = j - 1;
+					while(l > 0)
+					{
+						temp_map.map_mat[i][l + 1] = temp_map.map_mat[i][l];
+						temp_map.map_color[i][l + 1] = temp_map.map_color[i][l];
+						l--;
+					}
+				}
+				if(j == 0)
+				{
+					temp_map.map_mat[i][0] = OFF;
+					temp_map.map_color[i][0] = LCD_COLOR_BLACK;
+				}
+			}
+		}
+	}
+	return temp_map;
+}
+
+void draw_updated_map(map_t map)
+{
+	for(int i = 0; i < 10; i++)
+	{
+		for(int j = 0; j < 13; j++)
+		{
+			if(map.map_mat[i][j])
+			{
+				draw_block(map.x[i], map.y[j], map.map_color[i][j]);
+			}
+		}
+	}
+}
+void clear_map(map_t map)
+{
+	for(int i = 0; i < 10; i++)
+	{
+		for(int j = 0; j < 13; j++)
+		{
+				draw_block(map.x[i], map.y[j], LCD_COLOR_BLACK);
+		}
+	}
+}
+
 block_t block_rotate(block_t *block)
 {
 	block_t temp_block = *block;

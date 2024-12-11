@@ -1,8 +1,8 @@
 ../Core/Src/game.c:13:9:is_start_screen	4	static
 ../Core/Src/game.c:18:6:game_start_screen	8	static
 ../Core/Src/game.c:25:6:game_init	688	static
-../Core/Src/game.c:36:6:game_drop	688	static
-../Core/Src/game.c:56:6:game_rotate	120	static
-../Core/Src/game.c:63:6:game_move	128	static
-../Core/Src/game.c:73:9:game_finished	8	static
-../Core/Src/game.c:82:6:game_over	16	static
+../Core/Src/game.c:36:6:game_drop	1200	static
+../Core/Src/game.c:64:6:game_rotate	120	static
+../Core/Src/game.c:71:6:game_move	128	static
+../Core/Src/game.c:81:9:game_finished	8	static
+../Core/Src/game.c:90:6:game_over	16	static

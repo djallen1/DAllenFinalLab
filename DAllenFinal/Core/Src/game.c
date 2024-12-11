@@ -45,6 +45,14 @@ void game_drop()
 	else
 	{
 		map = map_update(&block, &map);
+
+		if(num_levels_cleared(&map) != 0)
+		{
+			clear_map(map);
+			map = level_clear(&map);
+			draw_updated_map(map);
+		}
+
 		block = block_create();
 		if(can_spawn(&block, &map))
 		{
