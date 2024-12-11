@@ -7,7 +7,7 @@
 #include "game.h"
 static block_t block;
 static map_t map;
-volatile uint8_t game_started;
+static uint8_t game_started;
 
 void game_init()
 {

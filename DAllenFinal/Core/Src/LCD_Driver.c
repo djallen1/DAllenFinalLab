@@ -360,10 +360,10 @@ void LCD_Error_Handler(void)
 
 void InitializeLCDTouch(void)
 {
-//  if(STMPE811_Init() != STMPE811_State_Ok)
-//  {
-//	 for(;;); // Hang code due to error in initialzation
-//  }
+  if(STMPE811_Init() != STMPE811_State_Ok)
+  {
+	 for(;;); // Hang code due to error in initialzation
+  }
 }
 
 STMPE811_State_t returnTouchStateAndLocation(STMPE811_TouchData * touchStruct)

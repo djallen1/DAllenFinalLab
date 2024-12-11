@@ -14,7 +14,6 @@
 ../Core/Src/BlockDriver.c:718:6:draw_shapes	7
 ../Core/Src/BlockDriver.c:780:6:draw_tetromino	4
 ../Core/Src/BlockDriver.c:794:6:clear_tetromino	4
-../Core/Src/BlockDriver.c:808:9:is_game_over	3
-../Core/Src/BlockDriver.c:820:9:can_spawn	16
-../Core/Src/BlockDriver.c:871:13:MX_RNG_Init	2
-../Core/Src/BlockDriver.c:881:13:MX_RNG_Deinit	2
+../Core/Src/BlockDriver.c:808:9:can_spawn	16
+../Core/Src/BlockDriver.c:859:13:MX_RNG_Init	2
+../Core/Src/BlockDriver.c:869:13:MX_RNG_Deinit	2

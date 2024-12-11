@@ -100,7 +100,7 @@ int main(void)
 
   /* USER CODE BEGIN 2 */
   ApplicationInit();
-  Application_game_inst();
+  //Application_game_inst();
   //HAL_Delay(5000);
   /* USER CODE END 2 */
 

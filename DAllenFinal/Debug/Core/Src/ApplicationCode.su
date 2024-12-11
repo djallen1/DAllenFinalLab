@@ -2,8 +2,8 @@
 ../Core/Src/ApplicationCode.c:47:6:Application_game_inst	8	static
 ../Core/Src/ApplicationCode.c:56:6:LCDTouchScreenInterruptGPIOInit	32	static
 ../Core/Src/ApplicationCode.c:81:6:EXTI15_10_IRQHandler	16	static
-../Core/Src/ApplicationCode.c:151:6:applicationButtonInit	8	static
-../Core/Src/ApplicationCode.c:156:6:EXTI0_IRQHandler	8	static
-../Core/Src/ApplicationCode.c:166:13:MX_TIM7_Init	16	static
-../Core/Src/ApplicationCode.c:199:6:TIM7_IRQHandler	8	static
-../Core/Src/ApplicationCode.c:214:6:start_timer	8	static
+../Core/Src/ApplicationCode.c:144:6:applicationButtonInit	8	static
+../Core/Src/ApplicationCode.c:149:6:EXTI0_IRQHandler	8	static
+../Core/Src/ApplicationCode.c:159:13:MX_TIM7_Init	16	static
+../Core/Src/ApplicationCode.c:192:6:TIM7_IRQHandler	8	static
+../Core/Src/ApplicationCode.c:207:6:start_timer	8	static

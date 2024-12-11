@@ -111,25 +111,18 @@ void EXTI15_10_IRQHandler()
 		{
 			Application_game_inst();
 		}
-		//printf("\nPressed");
-		// May need to do numerous retries? 
-		DetermineTouchPosition(&StaticTouchData);
-		/* Touch valid */
-		//printf("\nX: %03d\nY: %03d \n", StaticTouchData.x, StaticTouchData.y);
-		if(StaticTouchData.x > 120 && !is_start_screen())
-		{
-			game_move(RIGHT);
-		}
 		else
 		{
-			game_move(LEFT);
+			DetermineTouchPosition(&StaticTouchData);
+			if(StaticTouchData.x > 120)
+			{
+				game_move(RIGHT);
+			}
+			else
+			{
+				game_move(LEFT);
+			}
 		}
-		//LCD_Clear(0, LCD_COLOR_RED);
-
-	}else{
-		/* Touch not pressed */
-//		printf("\nNot pressed \n");
-//		LCD_Clear(0, LCD_COLOR_GREEN);
 	}
 
 	STMPE811_Write(STMPE811_FIFO_STA, 0x01);
