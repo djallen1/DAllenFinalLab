@@ -352,126 +352,11 @@ map_t map_init()
 	return map;
 }
 
-uint8_t rest(block_t *block, map_t *map)
+uint8_t collision(block_t *block, map_t* map, uint8_t dir)
 {
 	volatile block_t temp_tetromino = *block;
 	volatile map_t temp_map = *map;
 
-	//evaluate the logical AND between the true blocks in block_t and
-	//the next row of map_t (block y_pos + block size)
-	uint8_t y_max_index[4] = {0};
-	uint8_t x_max_index[4] = {0};
-	uint16_t y_max[4] = {0};
-	uint16_t x_max[4] = {0};
-	for(int i = 0; i < 4; i++)
-	{
-		for(int j = 0; j < 4; j++)
-		{
-			if(temp_tetromino.mat[i][j])
-			{
-				if(j > y_max_index[i])
-				{
-					y_max_index[i] = j;
-				}
-			}
-			else
-			{
-				y_max_index[i] = NO_BLOCK;
-			}
-		}
-		x_max_index[i] = i;
-	}
-	for(int i = 0; i < 4; i++)
-	{
-		if(y_max_index[i] == NO_BLOCK)
-		{
-			y_max[i] = NO_BLOCK;
-		}
-		else
-		{
-			y_max[i] = temp_tetromino.y[y_max_index[i]];
-			x_max[i] = temp_tetromino.x[x_max_index[i]];
-		}
-	}
-
-	uint8_t map_y_min_index[10] = {UINT8_MAX};
-	uint8_t map_x_min_index[10] = {UINT8_MAX};
-	uint16_t map_y_min[10];
-	uint16_t map_x_min[10];
-	for(int i = 0; i < 10; i++)
-	{
-		for(int j = 0; j < 13; j++)
-		{
-			if(temp_map.map_mat[i][j])
-			{
-				if(map_y_min_index[i] > j)
-				{
-					map_y_min_index[i] = j;
-				}
-			}
-			else
-			{
-				map_y_min_index[i] = NO_INDEX;
-			}
-		}
-		map_x_min_index[i] = i;
-	}
-	for(int i = 0; i < 10; i++)
-	{
-		if(map_y_min_index[i] == NO_INDEX)
-		{
-			map_y_min[i] = LCD_PIXEL_HEIGHT;
-		}
-		else
-		{
-			map_y_min[i] = temp_map.y[map_y_min_index[i]];
-			map_x_min[i] = temp_map.x[map_x_min_index[i]];
-		}
-	}
-
-	uint8_t overlap_map_x_index[4];
-	for(int i = 0; i < 4; i++)
-	{
-		for(int j = 0; j < 10; j++)
-		{
-			if(x_max[i] == map_x_min[j])
-			{
-				overlap_map_x_index[i] = j;
-			}
-		}
-	}
-
-//	for(int i = 0; i < 4; i++)
-//	{
-		if(map_y_min[overlap_map_x_index[0]] == y_max[0] + BLOCK_WIDTH || y_max[0] == BOTTOM_ROW)
-		{
-			return 1;
-		}
-		else if(map_y_min[overlap_map_x_index[1]] == y_max[1] + BLOCK_WIDTH || y_max[1] == BOTTOM_ROW)
-		{
-			return 1;
-		}
-		else if(map_y_min[overlap_map_x_index[2]] == y_max[2] + BLOCK_WIDTH || y_max[2] == BOTTOM_ROW)
-		{
-			return 1;
-		}
-		else if(map_y_min[overlap_map_x_index[3]] == y_max[3] + BLOCK_WIDTH || y_max[3] == BOTTOM_ROW)
-		{
-			return 1;
-		}
-//	}
-	return 0;
-}
-
-map_t map_update(block_t *block, map_t* map)
-{
-	//append the map array with the new blocks in their respective coordinates
-	//create new block
-	volatile block_t temp_tetromino = *block;
-	volatile map_t temp_map = *map;
-
-	uint8_t y_index[4];
-	uint8_t x_index[4];
 	uint16_t y_coor[4];
 	uint16_t x_coor[4];
 	uint8_t ind = 0;
@@ -482,18 +367,135 @@ map_t map_update(block_t *block, map_t* map)
 		{
 			if(temp_tetromino.mat[i][j])
 			{
-				x_index[ind] = i;
-				y_index[ind] = j;
+				x_coor[ind] = temp_tetromino.x[i];
+				y_coor[ind] = temp_tetromino.y[j];
 				ind++;
 			}
 		}
 	}
+
+	if(dir == LEFT)
+	{
+		for(int i = 0; i < 10; i++)
+		{
+			for(int j = 0; j < 13; j++)
+			{
+				if(temp_map.map_mat[i][j])
+				{
+					if(temp_map.x[i] == x_coor[0] - BLOCK_WIDTH && temp_map.y[j] == y_coor[0])
+					{
+						return 1;
+					}
+					else if(temp_map.x[i] == x_coor[1] - BLOCK_WIDTH && temp_map.y[j] == y_coor[1])
+					{
+						return 1;
+					}
+					else if(temp_map.x[i] == x_coor[2] - BLOCK_WIDTH && temp_map.y[j] == y_coor[2])
+					{
+						return 1;
+					}
+					else if(temp_map.x[i] == x_coor[3] - BLOCK_WIDTH && temp_map.y[j] == y_coor[3])
+					{
+						return 1;
+					}
+				}
+			}
+		}
+		if(x_coor[0] == LEFT_EDGE || x_coor[1] == LEFT_EDGE || x_coor[2] == LEFT_EDGE || x_coor[3] == LEFT_EDGE)
+		{
+			return 1;
+		}
+	}
+
+	if(dir == RIGHT)
+	{
+		for(int i = 0; i < 10; i++)
+		{
+			for(int j = 0; j < 13; j++)
+			{
+				if(temp_map.map_mat[i][j])
+				{
+					if(temp_map.x[i] == x_coor[0] + BLOCK_WIDTH && temp_map.y[j] == y_coor[0])
+					{
+						return 1;
+					}
+					else if(temp_map.x[i] == x_coor[1] + BLOCK_WIDTH && temp_map.y[j] == y_coor[1])
+					{
+						return 1;
+					}
+					else if(temp_map.x[i] == x_coor[2] + BLOCK_WIDTH && temp_map.y[j] == y_coor[2])
+					{
+						return 1;
+					}
+					else if(temp_map.x[i] == x_coor[3] + BLOCK_WIDTH && temp_map.y[j] == y_coor[3])
+					{
+						return 1;
+					}
+				}
+			}
+		}
+		if(x_coor[0] == RIGHT_EDGE || x_coor[1] == RIGHT_EDGE || x_coor[2] == RIGHT_EDGE || x_coor[3] == RIGHT_EDGE)
+		{
+			return 1;
+		}
+	}
+
+	if(dir == DOWN)
+	{
+		for(int i = 0; i < 10; i++)
+		{
+			for(int j = 0; j < 13; j++)
+			{
+				if(temp_map.map_mat[i][j])
+				{
+					if(temp_map.x[i] == x_coor[0] && temp_map.y[j] == y_coor[0] + BLOCK_WIDTH)
+					{
+						return 1;
+					}
+					else if(temp_map.x[i] == x_coor[1] && temp_map.y[j] == y_coor[1] + BLOCK_WIDTH)
+					{
+						return 1;
+					}
+					else if(temp_map.x[i] == x_coor[2] && temp_map.y[j] == y_coor[2] + BLOCK_WIDTH)
+					{
+						return 1;
+					}
+					else if(temp_map.x[i] == x_coor[3] && temp_map.y[j] == y_coor[3] + BLOCK_WIDTH)
+					{
+						return 1;
+					}
+				}
+			}
+		}
+		if(y_coor[0] == BOTTOM_ROW || y_coor[1] == BOTTOM_ROW || y_coor[2] == BOTTOM_ROW || y_coor[3] == BOTTOM_ROW)
+		{
+			return 1;
+		}
+	}
+	return 0;
+}
+
+map_t map_update(block_t *block, map_t* map)
+{
+	//append the map array with the new blocks in their respective coordinates
+	//create new block
+	volatile block_t temp_tetromino = *block;
+	volatile map_t temp_map = *map;
+
+	uint16_t y_coor[4];
+	uint16_t x_coor[4];
+	uint8_t ind = 0;
+
 	for(int i = 0; i < 4; i++)
 	{
-		if(x_index[i]>NO_INDEX && y_index[i]>NO_INDEX)
+		for(int j = 0; j < 4; j++)
 		{
-			x_coor[i] = temp_tetromino.x[x_index[i]];
-			y_coor[i] = temp_tetromino.y[y_index[i]];
+			if(temp_tetromino.mat[i][j])
+			{
+				x_coor[ind] = temp_tetromino.x[i];
+				y_coor[ind] = temp_tetromino.y[j];
+				ind++;
+			}
 		}
 	}
 
@@ -589,100 +591,6 @@ block_t block_rotate(block_t *block)
 		}
 	}
 	return temp_block;
-}
-
-uint8_t can_move(block_t *block, map_t *map, uint8_t dir)
-{
-	//dir is 1 if R, 0 if L
-
-	//evaluate the L/R touchpad input
-	//erase current and draw new
-
-	volatile block_t temp_tetromino = *block;
-	volatile map_t temp_map = *map;
-
-	//evaluate the logical AND between the true blocks in block_t and
-	//the next row of map_t (block y_pos + block size)
-	uint16_t y_block[4] = {0};
-	uint16_t x_block[4] = {0};
-	uint8_t ind = 0;
-	for(int j = 0; j < 4; j++)
-	{
-		for(int i = 0; i < 4; i++)
-		{
-			if(temp_tetromino.mat[i][j])
-			{
-				y_block[ind] = temp_tetromino.y[j];
-				x_block[ind] = temp_tetromino.x[i];
-				ind++;
-			}
-		}
-	}
-
-	uint16_t map_points = 0;
-	for(int i = 0; i < 10; i++)
-	{
-		for(int j = 0; j < 13; j++)
-		{
-			if(temp_map.map_mat[i][j])
-			{
-				map_points++;
-			}
-		}
-	}
-	uint8_t map_y_index[map_points];
-	uint8_t map_x_index[map_points];
-	uint16_t map_y[map_points];
-	uint16_t map_x[map_points];
-	uint8_t index = 0;
-	for(int i = 0; i < 10; i++)
-	{
-		for(int j = 0; j < 13; j++)
-		{
-			if(temp_map.map_mat[i][j])
-			{
-				map_x_index[index] = i;
-				map_y_index[index] = j;
-				index++;
-			}
-		}
-	}
-	for(int i = 0; i < map_points; i++)
-	{
-		map_y[i] = temp_map.y[map_y_index[i]];
-		map_x[i] = temp_map.x[map_x_index[i]];
-	}
-
-	uint8_t overlap_map_y_index[4];
-	for(int i = 0; i < 4; i++)
-	{
-		for(int j = 0; j < 13; j++)
-		{
-			if(y_block[i] == map_y[j])
-			{
-				overlap_map_y_index[i] = j;
-			}
-		}
-	}
-
-	for(int i = 0; i < 4; i++)
-	{
-		if(dir)
-		{
-			if(map_x[overlap_map_y_index[i]] == x_block[i] + BLOCK_WIDTH || x_block[i] == RIGHT_EDGE)
-			{
-				return 0;
-			}
-		}
-		else if(!dir)
-		{
-			if(map_x[overlap_map_y_index[i]] == x_block[i] - BLOCK_WIDTH || x_block[i] == LEFT_EDGE)
-			{
-				return 0;
-			}
-		}
-	}
-	return 1;
 }
 
 block_t block_move(block_t *block, map_t *map, uint8_t dir)

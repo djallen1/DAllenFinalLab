@@ -24,11 +24,10 @@
 
 #define LEFT 0
 #define RIGHT 1
+#define DOWN 2
 
-#define NO_BLOCK 0
 #define ON 1
 #define OFF 0
-#define NO_INDEX -1
 
 #define O 0
 #define L 1
@@ -53,23 +52,24 @@ typedef struct{
 	uint16_t y[13];
 }map_t;
 
-uint8_t can_spawn(block_t *block, map_t *map);
 void map_draw();
-void rng_init();
 void start_screen();
 void draw_shapes();
-void end_screen();
-void disp_time(uint32_t time);
-block_t block_drop(block_t *block);
-block_t block_create();
-uint8_t rest(block_t *block, map_t *map);
-map_t map_init();
-map_t map_update(block_t *block, map_t* map);
-block_t block_rotate(block_t *block);
-block_t block_move(block_t *block, map_t *map, uint8_t dir);
-uint8_t can_move(block_t *block, map_t *map, uint8_t dir);
 void draw_block(uint16_t x, uint16_t y, uint16_t color);
 void draw_tetromino(block_t block);
 void clear_tetromino(block_t block);
+void end_screen();
+void disp_time(uint32_t time);
+
+block_t block_drop(block_t *block);
+block_t block_create();
+block_t block_rotate(block_t *block);
+block_t block_move(block_t *block, map_t *map, uint8_t dir);
+
+uint8_t collision(block_t *block, map_t* map, uint8_t dir);
+uint8_t can_spawn(block_t *block, map_t *map);
+
+map_t map_init();
+map_t map_update(block_t *block, map_t* map);
 
 #endif /* INC_BLOCKDRIVER_H_ */

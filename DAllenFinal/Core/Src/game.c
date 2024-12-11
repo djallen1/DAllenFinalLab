@@ -5,30 +5,14 @@
  *      Author: 17202
  */
 #include "game.h"
+
 static block_t block;
 static map_t map;
 static uint8_t game_started;
 
-void game_init()
+uint8_t is_start_screen()
 {
-	game_started = STARTED;
-	//uint32_t start_time = HAL_GetTick();
-
-	//STMPE811_t touch_data = {0};
-
-	//while(STMPE811_ReadTouch(touch_data) != STMPE811_State_Pressed)
-	//{
-		//map_draw();
-	//}
-
-	//HAL_Delay(2000);
-	LCD_Clear(0,LCD_COLOR_BLACK);
-	map_draw();
-
-
-	block = block_create();
-	draw_tetromino(block);
-	map = map_init();
+	return game_started;
 }
 
 void game_start_screen()
@@ -38,22 +22,20 @@ void game_start_screen()
 	start_screen();
 }
 
-uint8_t is_start_screen()
+void game_init()
 {
-	return game_started;
-}
+	game_started = STARTED;
+	LCD_Clear(0,LCD_COLOR_BLACK);
 
-void game_over()
-{
-	end_screen();
-	uint32_t time = HAL_GetTick();
-	disp_time(time);
-	while(1){}
+	map = map_init();
+	map_draw();
+	block = block_create();
+	draw_tetromino(block);
 }
 
 void game_drop()
 {
-	if(!rest(&block, &map))
+	if(!collision(&block, &map, DOWN))
 	{
 		//HAL_Delay(500);
 		clear_tetromino(block);
@@ -73,7 +55,6 @@ void game_drop()
 
 void game_rotate()
 {
-	//HAL_Delay(500);
 	clear_tetromino(block);
 	block = block_rotate(&block);
 	draw_tetromino(block);
@@ -81,7 +62,7 @@ void game_rotate()
 
 void game_move(uint8_t dir)
 {
-	if(can_move(&block, &map, dir))
+	if(!collision(&block, &map, dir))
 	{
 		clear_tetromino(block);
 		block = block_move(&block, &map, dir);
@@ -96,4 +77,12 @@ uint8_t game_finished()
 		return 0;
 	}
 	return 1;
+}
+
+void game_over()
+{
+	end_screen();
+	uint32_t time = HAL_GetTick();
+	disp_time(time);
+	while(1){}
 }

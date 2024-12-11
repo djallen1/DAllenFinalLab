@@ -4,7 +4,6 @@
 "./Core/Src/ErrorHandling.o"
 "./Core/Src/GyroDriver.o"
 "./Core/Src/LCD_Driver.o"
-"./Core/Src/Scheduler.o"
 "./Core/Src/fonts.o"
 "./Core/Src/game.o"
 "./Core/Src/ili9341.o"
