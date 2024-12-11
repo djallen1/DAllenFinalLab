@@ -161,15 +161,11 @@ block_t block_create()
 	//COLOR
 	if(color == BLUE)
 	{
-		block.color = LCD_COLOR_BLUE;
+		block.color = LCD_COLOR_BLUE2;
 	}
 	if(color == RED)
 	{
 		block.color = LCD_COLOR_RED;
-	}
-	if(color == MAGENTA)
-	{
-		block.color = LCD_COLOR_MAGENTA;
 	}
 	if(color == GREEN)
 	{
@@ -633,43 +629,43 @@ void draw_shapes()
 	   	draw_block(6, 224 + i*BLOCK_WIDTH, LCD_COLOR_CYAN);
 	}
 
-	// L tetromino (green)
+	// L tetromino (orange)
 	x_offset += BLOCK_WIDTH * 4 + 15;
 	for (int i = 0; i < 3; i++)
 	{
-	   	draw_block(i*BLOCK_WIDTH + 144, 224 + BLOCK_WIDTH, LCD_COLOR_GREEN);
+	   	draw_block(i*BLOCK_WIDTH + 144, 224 + BLOCK_WIDTH, LCD_COLOR_ORANGE);
 	}
-	draw_block(190, 224, LCD_COLOR_GREEN);
+	draw_block(190, 224, LCD_COLOR_ORANGE);
 
-	// J tetromino (yellow)
+	// J tetromino (blue2)
 	x_offset += BLOCK_WIDTH * 4 + 15;
 	for (int i = 0; i < 3; i++)
 	{
-	   	draw_block(75 + (i-2)*BLOCK_WIDTH, 224 + BLOCK_WIDTH, LCD_COLOR_YELLOW);
+	   	draw_block(75 + (i-2)*BLOCK_WIDTH, 224 + BLOCK_WIDTH, LCD_COLOR_BLUE2);
 	}
-	draw_block(52 + BLOCK_WIDTH, 224 + 2*BLOCK_WIDTH, LCD_COLOR_YELLOW);
+	draw_block(52 + BLOCK_WIDTH, 224 + 2*BLOCK_WIDTH, LCD_COLOR_BLUE2);
 
-	// O tetromino (orange)
+	// O tetromino (yellow)
 	x_offset += BLOCK_WIDTH * 4 + 15;
 	for (int i = 0; i < 2; i++) {
 	    for (int j = 0; j < 2; j++) {
-	       	draw_block(67 + i*BLOCK_WIDTH - 38, 270 + j*BLOCK_WIDTH, LCD_COLOR_ORANGE);
+	       	draw_block(67 + i*BLOCK_WIDTH - 38, 270 + j*BLOCK_WIDTH, LCD_COLOR_YELLOW);
 	    }
 	}
 
 	// S tetromino (magenta)
 	x_offset += BLOCK_WIDTH * 4 + 15;
-	draw_block(144, 270 + BLOCK_WIDTH, LCD_COLOR_MAGENTA);
-	draw_block(144 + BLOCK_WIDTH, 270 + BLOCK_WIDTH, LCD_COLOR_MAGENTA);
-	draw_block(144 + BLOCK_WIDTH, 270, LCD_COLOR_MAGENTA);
-	draw_block(144 + BLOCK_WIDTH * 2, 270, LCD_COLOR_MAGENTA);
+	draw_block(144, 270 + BLOCK_WIDTH, LCD_COLOR_GREEN);
+	draw_block(144 + BLOCK_WIDTH, 270 + BLOCK_WIDTH, LCD_COLOR_GREEN);
+	draw_block(144 + BLOCK_WIDTH, 270, LCD_COLOR_GREEN);
+	draw_block(144 + BLOCK_WIDTH * 2, 270, LCD_COLOR_GREEN);
 
-	// T tetromino (blue2)
+	// T tetromino (purple)
 	x_offset += BLOCK_WIDTH * 4 + 15;
 	for (int i = 0; i < 3; i++) {
-	   	draw_block(LEFT_EDGE + (i+3) * BLOCK_WIDTH, 293, LCD_COLOR_BLUE2);
+	   	draw_block(LEFT_EDGE + (i+3) * BLOCK_WIDTH, 293, LCD_COLOR_PURPLE);
 	}
-	draw_block(LEFT_EDGE + 4*BLOCK_WIDTH, 293 - BLOCK_WIDTH, LCD_COLOR_BLUE2);
+	draw_block(LEFT_EDGE + 4*BLOCK_WIDTH, 293 - BLOCK_WIDTH, LCD_COLOR_PURPLE);
 
 	// Z tetromino (strawberry)
 	x_offset += BLOCK_WIDTH * 4 + 15;
@@ -678,11 +674,11 @@ void draw_shapes()
 	draw_block(LEFT_EDGE + 5*BLOCK_WIDTH, 247 + BLOCK_WIDTH, LCD_COLOR_STRAWBERRY);
 	draw_block(LEFT_EDGE + 6*BLOCK_WIDTH, 247 + BLOCK_WIDTH, LCD_COLOR_STRAWBERRY);
 
-	// "O" shape (magenta)
-	draw_block(x_offset - 50 + BLOCK_WIDTH, 246 - 9*BLOCK_WIDTH, LCD_COLOR_MAGENTA);
-	draw_block(x_offset - 50 , 246 - 9*BLOCK_WIDTH, LCD_COLOR_MAGENTA);
-	draw_block(x_offset - 50 , 246 - 8*BLOCK_WIDTH, LCD_COLOR_MAGENTA);
-	draw_block(x_offset - 50 + BLOCK_WIDTH, 246 - 8*BLOCK_WIDTH, LCD_COLOR_MAGENTA);
+	// "O" shape (yellow)
+	draw_block(x_offset - 50 + BLOCK_WIDTH, 246 - 9*BLOCK_WIDTH, LCD_COLOR_YELLOW);
+	draw_block(x_offset - 50 , 246 - 9*BLOCK_WIDTH, LCD_COLOR_YELLOW);
+	draw_block(x_offset - 50 , 246 - 8*BLOCK_WIDTH, LCD_COLOR_YELLOW);
+	draw_block(x_offset - 50 + BLOCK_WIDTH, 246 - 8*BLOCK_WIDTH, LCD_COLOR_YELLOW);
 }
 
 void draw_tetromino(block_t block)

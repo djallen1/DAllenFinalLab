@@ -27,10 +27,10 @@ void game_init()
 	game_started = STARTED;
 	LCD_Clear(0,LCD_COLOR_BLACK);
 
-	map = map_init();
 	map_draw();
 	block = block_create();
 	draw_tetromino(block);
+	map = map_init();
 }
 
 void game_drop()

@@ -35,19 +35,17 @@
 #define LCD_COLOR_YELLOW        0xFFE0
 #define LCD_COLOR_STRAWBERRY	0xF987
 #define LCD_COLOR_ORANGE		0xFBC1
-#define LCD_COLOR_PURPLE		0x7818
+#define LCD_COLOR_PURPLE		0xB818
 #define LCD_COLOR_PINK			0xF8EE
 #define LCD_COLOR_GRASS			0x1BE1
 
-
-#define BLUE          			0
-#define RED           			1
-#define MAGENTA       			2
+#define YELLOW        			0
+#define ORANGE					1
+#define BLUE          			2
 #define GREEN         			3
-#define CYAN          			4
-#define YELLOW        			5
-#define ORANGE					6
-#define PURPLE					7
+#define RED           			4
+#define PURPLE					5
+#define CYAN          			6
 
 /* Timing configuration from datahseet
   HSYNC=10 (9+1)
