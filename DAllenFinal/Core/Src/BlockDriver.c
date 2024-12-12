@@ -170,7 +170,6 @@ void end_screen(uint8_t singles, uint8_t doubles, uint8_t triples, uint8_t tetri
 	LCD_DisplayChar(154, 280, score);
 	LCD_DisplayChar(162, 280, '0');
 	LCD_DisplayChar(170, 280, '0');
-
 }
 
 void disp_time(uint32_t time)
@@ -205,7 +204,7 @@ block_t block_drop(block_t *block)
 {
 	//when timer reaches ARR and enters IRQ handler, call this function
 	volatile block_t temp_tetromino = *block;
-	for(int i = 0; i < 4; i++)
+	for(int i = 0; i < SIZE; i++)
 	{
 		temp_tetromino.y[i] += BLOCK_WIDTH;
 	}
@@ -217,11 +216,6 @@ block_t block_create()
 {
 	MX_RNG_Init();
 	volatile block_t block = {0};
-	//evaluate rng -> determine block char
-	//determine block matrix corresponding to block char
-	//evaluate rng for color
-	//set pos_x, pos_y
-	//return the block
 
 	uint32_t rand;
 	HAL_RNG_GenerateRandomNumber(&hrng, &rand);
@@ -263,7 +257,7 @@ block_t block_create()
 		block.color = LCD_COLOR_PURPLE;
 	}
 	//COORDINATES
-	for(int i = 0; i < 4; i++)
+	for(int i = 0; i < SIZE; i++)
 	{
 		block.x[i] = BLOCK_START_X + i*BLOCK_WIDTH; //BLOCK_START_X is first coordinate in X
 	}
@@ -271,20 +265,20 @@ block_t block_create()
 	//BLOCK MATRICES
 	if(block.name == O)
 	{
-		uint16_t temp[4][4] =
+		uint16_t temp[SIZE][SIZE] =
 			{{0,0,0,0},
 			{0,0,0,0},
 			{0,0,1,1},
 			{0,0,1,1}};
 
-		for(int i = 0; i < 4; i++)
+		for(int i = 0; i < SIZE; i++)
 		{
-			for(int j = 0; j < 4; j++)
+			for(int j = 0; j < SIZE; j++)
 			{
 				block.mat[i][j] = temp[j][i];
 			}
 		}
-		for(int i = 0; i < 4; i++)
+		for(int i = 0; i < SIZE; i++)
 		{
 			block.x[i] = BLOCK_START_X + (i-1)*BLOCK_WIDTH; //BLOCK_START_X is first coordinate in X
 			block.y[i] = BLOCK_START_Y + (i-2)*BLOCK_WIDTH; //BLOCK_START_Y is first coordinate in Y
@@ -292,19 +286,19 @@ block_t block_create()
 	}
 	if(block.name == L)
 	{
-		uint16_t temp[4][4] =
+		uint16_t temp[SIZE][SIZE] =
 			{{0,0,0,0},
 			{0,0,1,0},
 			{0,0,1,0},
 			{0,0,1,1}};
-		for(int i = 0; i < 4; i++)
+		for(int i = 0; i < SIZE; i++)
 		{
-			for(int j = 0; j < 4; j++)
+			for(int j = 0; j < SIZE; j++)
 			{
 				block.mat[i][j] = temp[j][i];
 			}
 		}
-		for(int i = 0; i < 4; i++)
+		for(int i = 0; i < SIZE; i++)
 		{
 			block.x[i] = BLOCK_START_X + (i-1)*BLOCK_WIDTH; //BLOCK_START_X is first coordinate in X
 			block.y[i] = BLOCK_START_Y + (i-1)*BLOCK_WIDTH; //BLOCK_START_Y is first coordinate in Y
@@ -312,19 +306,19 @@ block_t block_create()
 	}
 	if(block.name == J)
 	{
-		uint16_t temp[4][4] =
+		uint16_t temp[SIZE][SIZE] =
 			{{0,0,0,0},
 			{0,0,1,0},
 			{0,0,1,0},
 			{0,1,1,0}};
-		for(int i = 0; i < 4; i++)
+		for(int i = 0; i < SIZE; i++)
 		{
-			for(int j = 0; j < 4; j++)
+			for(int j = 0; j < SIZE; j++)
 			{
 				block.mat[i][j] = temp[j][i];
 			}
 		}
-		for(int i = 0; i < 4; i++)
+		for(int i = 0; i < SIZE; i++)
 		{
 			block.x[i] = BLOCK_START_X + i*BLOCK_WIDTH; //BLOCK_START_X is first coordinate in X
 			block.y[i] = BLOCK_START_Y + (i-1)*BLOCK_WIDTH; //BLOCK_START_Y is first coordinate in Y
@@ -332,76 +326,76 @@ block_t block_create()
 	}
 	if(block.name == S)
 	{
-		uint16_t temp[4][4] =
+		uint16_t temp[SIZE][SIZE] =
 			{{0,0,0,0},
 			{0,0,0,0},
 			{0,0,1,1},
 			{0,1,1,0}};
-		for(int i = 0; i < 4; i++)
+		for(int i = 0; i < SIZE; i++)
 		{
-			for(int j = 0; j < 4; j++)
+			for(int j = 0; j < SIZE; j++)
 			{
 				block.mat[i][j] = temp[j][i];
 			}
 		}
-		for(int i = 0; i < 4; i++)
+		for(int i = 0; i < SIZE; i++)
 		{
 			block.y[i] = BLOCK_START_Y + (i-2)*BLOCK_WIDTH; //BLOCK_START_Y is first coordinate in Y
 		}
 	}
 	if(block.name == Z)
 	{
-		uint16_t temp[4][4] =
+		uint16_t temp[SIZE][SIZE] =
 			{{0,0,0,0},
 			{0,0,0,0},
 			{0,1,1,0},
 			{0,0,1,1}};
-		for(int i = 0; i < 4; i++)
+		for(int i = 0; i < SIZE; i++)
 		{
-			for(int j = 0; j < 4; j++)
+			for(int j = 0; j < SIZE; j++)
 			{
 				block.mat[i][j] = temp[j][i];
 			}
 		}
-		for(int i = 0; i < 4; i++)
+		for(int i = 0; i < SIZE; i++)
 		{
 			block.y[i] = BLOCK_START_Y + (i-2)*BLOCK_WIDTH; //BLOCK_START_Y is first coordinate in Y
 		}
 	}
 	if(block.name == T)
 	{
-		uint16_t temp[4][4] =
+		uint16_t temp[SIZE][SIZE] =
 			{{0,0,0,0},
 			{0,0,0,0},
 			{0,0,1,0},
 			{0,1,1,1}};
-		for(int i = 0; i < 4; i++)
+		for(int i = 0; i < SIZE; i++)
 		{
-			for(int j = 0; j < 4; j++)
+			for(int j = 0; j < SIZE; j++)
 			{
 				block.mat[i][j] = temp[j][i];
 			}
 		}
-		for(int i = 0; i < 4; i++)
+		for(int i = 0; i < SIZE; i++)
 		{
 			block.y[i] = BLOCK_START_Y + (i-2)*BLOCK_WIDTH; //BLOCK_START_Y is first coordinate in Y
 		}
 	}
 	if(block.name == I)
 	{
-		uint16_t temp[4][4] =
+		uint16_t temp[SIZE][SIZE] =
 			{{0,0,0,0},
 			{0,0,0,0},
 			{1,1,1,1},
 			{0,0,0,0}};
-		for(int i = 0; i < 4; i++)
+		for(int i = 0; i < SIZE; i++)
 		{
-			for(int j = 0; j < 4; j++)
+			for(int j = 0; j < SIZE; j++)
 			{
 				block.mat[i][j] = temp[j][i];
 			}
 		}
-		for(int i = 0; i < 4; i++)
+		for(int i = 0; i < SIZE; i++)
 		{
 			block.y[i] = BLOCK_START_Y + (i-2)*BLOCK_WIDTH; //BLOCK_START_Y is first coordinate in Y
 		}
@@ -412,11 +406,11 @@ block_t block_create()
 map_t map_init()
 {
 	volatile map_t map = {0};
-	for(int i = 0; i < 10; i++)
+	for(int i = 0; i < COLS; i++)
 	{
 		map.x[i] = LEFT_EDGE + i*BLOCK_WIDTH;
 	}
-	for(int i = 0; i < 13; i++)
+	for(int i = 0; i < ROWS; i++)
 	{
 		map.y[i] = MAP_DIFFERENCE + EDGE_WIDTH + i*BLOCK_WIDTH + 2;
 	}
@@ -428,13 +422,13 @@ uint8_t collision(block_t *block, map_t* map, uint8_t dir)
 	volatile block_t temp_tetromino = *block;
 	volatile map_t temp_map = *map;
 
-	uint16_t y_coor[4];
-	uint16_t x_coor[4];
+	uint16_t y_coor[SIZE];
+	uint16_t x_coor[SIZE];
 	uint8_t ind = 0;
 
-	for(int i = 0; i < 4; i++)
+	for(int i = 0; i < SIZE; i++)
 	{
-		for(int j = 0; j < 4; j++)
+		for(int j = 0; j < SIZE; j++)
 		{
 			if(temp_tetromino.mat[i][j])
 			{
@@ -447,9 +441,9 @@ uint8_t collision(block_t *block, map_t* map, uint8_t dir)
 
 	if(dir == LEFT)
 	{
-		for(int i = 0; i < 10; i++)
+		for(int i = 0; i < COLS; i++)
 		{
-			for(int j = 0; j < 13; j++)
+			for(int j = 0; j < ROWS; j++)
 			{
 				if(temp_map.map_mat[i][j])
 				{
@@ -480,9 +474,9 @@ uint8_t collision(block_t *block, map_t* map, uint8_t dir)
 
 	if(dir == RIGHT)
 	{
-		for(int i = 0; i < 10; i++)
+		for(int i = 0; i < COLS; i++)
 		{
-			for(int j = 0; j < 13; j++)
+			for(int j = 0; j < ROWS; j++)
 			{
 				if(temp_map.map_mat[i][j])
 				{
@@ -513,9 +507,9 @@ uint8_t collision(block_t *block, map_t* map, uint8_t dir)
 
 	if(dir == DOWN)
 	{
-		for(int i = 0; i < 10; i++)
+		for(int i = 0; i < COLS; i++)
 		{
-			for(int j = 0; j < 13; j++)
+			for(int j = 0; j < ROWS; j++)
 			{
 				if(temp_map.map_mat[i][j])
 				{
@@ -553,13 +547,13 @@ map_t map_update(block_t *block, map_t* map)
 	volatile block_t temp_tetromino = *block;
 	volatile map_t temp_map = *map;
 
-	uint16_t y_coor[4];
-	uint16_t x_coor[4];
+	uint16_t y_coor[SIZE];
+	uint16_t x_coor[SIZE];
 	uint8_t ind = 0;
 
-	for(int i = 0; i < 4; i++)
+	for(int i = 0; i < SIZE; i++)
 	{
-		for(int j = 0; j < 4; j++)
+		for(int j = 0; j < SIZE; j++)
 		{
 			if(temp_tetromino.mat[i][j])
 			{
@@ -573,9 +567,9 @@ map_t map_update(block_t *block, map_t* map)
 	//get indices for the map coordinates corresponding to the block coordinates
 	//set the map logical matrix, and the color
 	uint8_t index = 0;
-	for(int i = 0; i < 10; i++)
+	for(int i = 0; i < COLS; i++)
 	{
-		for(int j = 0; j < 13; j++)
+		for(int j = 0; j < ROWS; j++)
 		{
 			if(temp_map.x[i] == x_coor[index] && temp_map.y[j] == y_coor[index])
 			{
@@ -593,13 +587,13 @@ uint8_t num_levels_cleared(map_t *map)
 	volatile map_t temp_map = *map;
 
 	uint8_t n = 0;
-	for(int j = 0; j < 13; j++)
+	for(int j = 0; j < ROWS; j++)
 	{
 		volatile uint8_t sum = 0;
-		for(int i = 0; i < 10; i++)
+		for(int i = 0; i < COLS; i++)
 		{
 			sum += temp_map.map_mat[i][j];
-			if(sum == 10)
+			if(sum == COLS)
 			{
 				n++;
 			}
@@ -613,14 +607,14 @@ map_t level_clear(map_t *map)
 	volatile map_t temp_map = *map;
 
 	uint8_t n = 0;
-	volatile uint8_t row_ind_cleared[4] = {0};
-	for(int j = 0; j < 13; j++)
+	volatile uint8_t row_ind_cleared[SIZE] = {0};
+	for(int j = 0; j < ROWS; j++)
 	{
 		volatile uint8_t sum = 0;
-		for(int i = 0; i < 10; i++)
+		for(int i = 0; i < COLS; i++)
 		{
 			sum += temp_map.map_mat[i][j];
-			if(sum == 10)
+			if(sum == COLS)
 			{
 				row_ind_cleared[n] = j;
 				n++;
@@ -632,7 +626,7 @@ map_t level_clear(map_t *map)
 	{
 		for(int j = row_ind_cleared[k]; j >= 0; j--)
 		{
-			for(int i = 0; i < 10; i++)
+			for(int i = 0; i < COLS; i++)
 			{
 				if(j == row_ind_cleared[k])
 				{
@@ -652,9 +646,9 @@ map_t level_clear(map_t *map)
 
 void draw_updated_map(map_t map)
 {
-	for(int i = 0; i < 10; i++)
+	for(int i = 0; i < COLS; i++)
 	{
-		for(int j = 0; j < 13; j++)
+		for(int j = 0; j < ROWS; j++)
 		{
 			if(map.map_mat[i][j])
 			{
@@ -665,9 +659,9 @@ void draw_updated_map(map_t map)
 }
 void clear_map(map_t map)
 {
-	for(int i = 0; i < 10; i++)
+	for(int i = 0; i < COLS; i++)
 	{
-		for(int j = 0; j < 13; j++)
+		for(int j = 0; j < ROWS; j++)
 		{
 			draw_block(map.x[i], map.y[j], LCD_COLOR_BLACK);
 		}
@@ -687,17 +681,17 @@ block_t block_rotate(block_t *block, map_t *map)
 
 	if(temp_block.name == I)
 	{
-		uint8_t transpose[4][4];
-		for(int i = 0; i < 4; i++)
+		uint8_t transpose[SIZE][SIZE];
+		for(int i = 0; i < SIZE; i++)
 		{
-			for(int j = 0; j < 4; j++)
+			for(int j = 0; j < SIZE; j++)
 			{
 				transpose[i][j] = temp_block.mat[j][i];
 			}
 		}
-		for(int i = 0; i < 4; i++)
+		for(int i = 0; i < SIZE; i++)
 		{
-			for(int j = 0; j < 4; j++)
+			for(int j = 0; j < SIZE; j++)
 			{
 				temp_block.mat[i][j] = transpose[i][j];
 			}
@@ -707,36 +701,36 @@ block_t block_rotate(block_t *block, map_t *map)
 
 	else if(temp_block.name != O)
 	{
-		uint8_t transpose_3x3[3][3];
-		uint8_t transform[3][3];
-		uint8_t mirror_identity[3][3] =
+		uint8_t transpose_3x3[SIZE-1][SIZE-1];
+		uint8_t transform[SIZE-1][SIZE-1];
+		uint8_t mirror_identity[SIZE-1][SIZE-1] =
 		{{0, 0, 1},
 		{0, 1, 0},
 		{1, 0, 0}};
 
-		for(int i = 1; i < 4; i++)
+		for(int i = 1; i < SIZE; i++)
 		{
-			for(int j = 1; j < 4; j++)
+			for(int j = 1; j < SIZE; j++)
 			{
 				transpose_3x3[i-1][j-1] = temp_block.mat[j][i];
 			}
 		}
 
-		for(int k = 0; k < 3; k++)
+		for(int k = 0; k < SIZE-1; k++)
 		{
-			for(int i = 0; i < 3; i++)
+			for(int i = 0; i < SIZE-1; i++)
 			{
 				transform[k][i] = 0;
-				for(int j = 0; j < 3; j++)
+				for(int j = 0; j < SIZE-1; j++)
 				{
 					transform[k][i] += (transpose_3x3[k][j] * mirror_identity[j][i]);
 				}
 			}
 		}
 
-		for(int i = 0; i < 4; i++)
+		for(int i = 0; i < SIZE; i++)
 		{
-			for(int j = 0; j < 4; j++)
+			for(int j = 0; j < SIZE; j++)
 			{
 				if(i == 0 || j == 0)
 				{
@@ -753,9 +747,12 @@ block_t block_rotate(block_t *block, map_t *map)
 	{
 		temp_block = block_move(&temp_block, &temp_map, LEFT);
 	}
-	else if(temp_block.x[0] < LEFT_EDGE)
+	else if(temp_block.x[0] > LCD_PIXEL_WIDTH)
 	{
-		temp_block = block_move(&temp_block, &temp_map, RIGHT);
+		while(temp_block.x[0] != LEFT_EDGE)
+		{
+			temp_block = block_move(&temp_block, &temp_map, RIGHT);
+		}
 	}
 	return temp_block;
 }
@@ -767,14 +764,14 @@ block_t block_move(block_t *block, map_t *map, uint8_t dir)
 	volatile block_t temp_tetromino = *block;
 	if(dir)
 	{
-		for(int i = 0; i < 4; i++)
+		for(int i = 0; i < SIZE; i++)
 		{
 			temp_tetromino.x[i] += BLOCK_WIDTH;
 		}
 	}
 	else
 	{
-		for(int i = 0; i < 4; i++)
+		for(int i = 0; i < SIZE; i++)
 		{
 			temp_tetromino.x[i] -= BLOCK_WIDTH;
 		}
@@ -854,9 +851,9 @@ void draw_shapes()
 
 void draw_tetromino(block_t block)
 {
-	for(int i = 0; i < 4; i++)
+	for(int i = 0; i < SIZE; i++)
 	{
-		for(int j = 0; j < 4; j++)
+		for(int j = 0; j < SIZE; j++)
 		{
 			if(block.mat[i][j])
 			{
@@ -868,9 +865,9 @@ void draw_tetromino(block_t block)
 
 void clear_tetromino(block_t block)
 {
-	for(int i = 0; i < 4; i++)
+	for(int i = 0; i < SIZE; i++)
 	{
-		for(int j = 0; j < 4; j++)
+		for(int j = 0; j < SIZE; j++)
 		{
 			if(block.mat[i][j])
 			{
@@ -885,13 +882,13 @@ uint8_t can_spawn(block_t *block, map_t *map)
 	volatile block_t temp_tetromino = *block;
 	volatile map_t temp_map = *map;
 
-	uint16_t block_x[4];
-	uint16_t block_y[4];
+	uint16_t block_x[SIZE];
+	uint16_t block_y[SIZE];
 	uint8_t ind = 0;
 
-	for(int i = 0; i < 4; i++)
+	for(int i = 0; i < SIZE; i++)
 	{
-		for(int j = 0; j < 4; j++)
+		for(int j = 0; j < SIZE; j++)
 		{
 			if(temp_tetromino.mat[i][j])
 			{

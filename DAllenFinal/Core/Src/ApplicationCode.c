@@ -1,8 +1,8 @@
 /*
  * ApplicationCode.c
  *
- *  Created on: Dec 30, 2023 (updated 11/12/2024) Thanks Donavon! 
- *      Author: Xavion
+ *  Created on:
+ *      Author:
  */
 
 #include "ApplicationCode.h"
@@ -114,18 +114,29 @@ void EXTI15_10_IRQHandler()
 		else
 		{
 			DetermineTouchPosition(&StaticTouchData);
-			if(StaticTouchData.x > 120 && StaticTouchData.y < 200)
+
+/////////////////////// FOR BROKEN USER BUTTON /////////////////////////
+//			if(StaticTouchData.x > 120 && StaticTouchData.y < 200)
+//			{
+//				game_move(RIGHT);
+//			}
+//			else if(StaticTouchData.x < 120 && StaticTouchData.y < 200)
+//			{
+//				game_move(LEFT);
+//			}
+//			else
+//			{
+//				game_rotate();
+//			}
+////////////////////////////////////////////////////////////////////////
+
+			if(StaticTouchData.x > LCD_PIXEL_WIDTH/2)
 			{
 				game_move(RIGHT);
-				//game_rotate();
 			}
-			else if(StaticTouchData.x < 120 && StaticTouchData.y < 200)
+			else if(StaticTouchData.x < LCD_PIXEL_WIDTH/2)
 			{
 				game_move(LEFT);
-			}
-			else
-			{
-				game_rotate();
 			}
 		}
 	}
@@ -163,16 +174,7 @@ void EXTI0_IRQHandler()
 
 static void MX_TIM7_Init(void)
 {
-
-  /* USER CODE BEGIN TIM7_Init 0 */
-
-  /* USER CODE END TIM7_Init 0 */
-
   TIM_MasterConfigTypeDef sMasterConfig = {0};
-
-  /* USER CODE BEGIN TIM7_Init 1 */
-
-  /* USER CODE END TIM7_Init 1 */
   htim7.Instance = TIM7;
   htim7.Init.Prescaler = PRESCALAR_VAL;
   htim7.Init.CounterMode = TIM_COUNTERMODE_UP;
@@ -188,10 +190,6 @@ static void MX_TIM7_Init(void)
   {
 	APPLICATION_ASSERT(1);
   }
-  /* USER CODE BEGIN TIM7_Init 2 */
-
-  /* USER CODE END TIM7_Init 2 */
-
 }
 
 void TIM7_IRQHandler(void)
@@ -215,7 +213,5 @@ void start_timer()
 	__HAL_TIM_CLEAR_FLAG(&htim7, TIM_FLAG_UPDATE);
 	HAL_NVIC_EnableIRQ(TIM7_IRQn);
 	HAL_TIM_Base_Start_IT(&htim7);
-	//((&htim7)->Instance->SR) |= 0;
-	//__HAL_TIM_CLEAR_FLAG(&htim7, TIM_FLAG_UPDATE);
 }
 

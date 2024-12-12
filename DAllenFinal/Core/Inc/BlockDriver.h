@@ -16,6 +16,10 @@
 #define MAP_HEIGHT 309
 #define MAP_DIFFERENCE 11
 
+#define ROWS 13
+#define COLS 10
+#define SIZE 4
+
 #define BLOCK_START_X 75
 #define BLOCK_START_Y 17
 #define RIGHT_EDGE 213

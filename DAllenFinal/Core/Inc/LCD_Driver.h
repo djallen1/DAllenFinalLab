@@ -2,7 +2,7 @@
  * LCD_Driver.h
  *
  *  Created on: Sep 28, 2023
- *      Author: Xavion
+ *      Author: Xavion modified by 17202
  */
 
 #ifndef INC_LCD_DRIVER_H_

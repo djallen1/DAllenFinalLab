@@ -1,8 +1,8 @@
 /*
  * ApplicationCode.h
  *
- *  Created on: Dec 30, 2023
- *      Author: Xavion
+ *  Created on:
+ *      Author:
  */
 
 //#include "LCD_Driver.h"
@@ -12,8 +12,8 @@
 #include <stdio.h>
 
 #define ARR_VAL 59999
-//#define PRESCALAR_VAL 1999
-#define PRESCALAR_VAL 999
+#define PRESCALAR_VAL 3999 // ~3s
+//#define PRESCALAR_VAL 999 // ~0.75s
 
 #ifndef INC_APPLICATIONCODE_H_
 #define INC_APPLICATIONCODE_H_
