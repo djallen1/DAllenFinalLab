@@ -82,19 +82,95 @@ void start_screen()
 	LCD_DisplayChar(148, 154, 'Y');
 }
 
-void end_screen()
+void end_screen(uint8_t singles, uint8_t doubles, uint8_t triples, uint8_t tetris)
 {
+	uint32_t single_char = singles + '0';
+	uint32_t double_char = doubles + '0';
+	uint32_t triple_char = triples + '0';
+	uint32_t tetris_char = tetris + '0';
+
+	uint32_t score = singles + 3*doubles + 5*triples + 8*tetris;
+	uint32_t score_tens = 0;
+	while(score > 10)
+	{
+		score -= 10;
+		score_tens++;
+	}
+
+	score += '0';
+	score_tens += '0';
+
 	LCD_Clear(0,LCD_COLOR_BLACK);
 	LCD_SetFont(&Font16x24);
 	LCD_SetTextColor(LCD_COLOR_WHITE);
-	LCD_DisplayChar(80, 100, 'G');
-	LCD_DisplayChar(102, 100, 'A');
-	LCD_DisplayChar(122, 100, 'M');
-	LCD_DisplayChar(144, 100, 'E');
-	LCD_DisplayChar(80, 130, 'O');
-	LCD_DisplayChar(102, 130, 'V');
-	LCD_DisplayChar(122, 130, 'E');
-	LCD_DisplayChar(144, 130, 'R');
+	LCD_DisplayChar(80, 60, 'G');
+	LCD_DisplayChar(102, 60, 'A');
+	LCD_DisplayChar(122, 60, 'M');
+	LCD_DisplayChar(144, 60, 'E');
+	LCD_DisplayChar(80, 90, 'O');
+	LCD_DisplayChar(102, 90, 'V');
+	LCD_DisplayChar(122, 90, 'E');
+	LCD_DisplayChar(144, 90, 'R');
+
+	LCD_SetFont(&Font12x12);
+	LCD_DisplayChar(88, 190, 'S');
+	LCD_DisplayChar(96, 190, 'i');
+	LCD_DisplayChar(100, 190, 'n');
+	LCD_DisplayChar(108, 190, 'g');
+	LCD_DisplayChar(116, 190, 'l');
+	LCD_DisplayChar(120, 190, 'e');
+	LCD_DisplayChar(128, 190, 's');
+	LCD_DisplayChar(136, 190, ':');
+	LCD_DisplayChar(146, 190, single_char);
+
+	LCD_DisplayChar(84, 210, 'D');
+	LCD_DisplayChar(92, 210, 'o');
+	LCD_DisplayChar(100, 210, 'u');
+	LCD_DisplayChar(108, 210, 'b');
+	LCD_DisplayChar(116, 210, 'l');
+	LCD_DisplayChar(120, 210, 'e');
+	LCD_DisplayChar(128, 210, 's');
+	LCD_DisplayChar(136, 210, ':');
+	LCD_DisplayChar(146, 210, double_char);
+
+	LCD_DisplayChar(92, 230, 'T');
+	LCD_DisplayChar(100, 230, 'r');
+	LCD_DisplayChar(104, 230, 'i');
+	LCD_DisplayChar(108, 230, 'p');
+	LCD_DisplayChar(116, 230, 'l');
+	LCD_DisplayChar(120, 230, 'e');
+	LCD_DisplayChar(128, 230, 's');
+	LCD_DisplayChar(136, 230, ':');
+	LCD_DisplayChar(146, 230, triple_char);
+
+	LCD_DisplayChar(96, 250, 'T');
+	LCD_DisplayChar(104, 250, 'e');
+	LCD_DisplayChar(112, 250, 't');
+	LCD_DisplayChar(118, 250, 'r');
+	LCD_DisplayChar(124, 250, 'i');
+	LCD_DisplayChar(128, 250, 's');
+	LCD_DisplayChar(136, 250, ':');
+	LCD_DisplayChar(146, 250, tetris_char);
+
+	LCD_Draw_Horizontal_Line(21, 270, 200, LCD_COLOR_WHITE);
+
+	LCD_DisplayChar(62, 280, 'F');
+	LCD_DisplayChar(70, 280, 'i');
+	LCD_DisplayChar(74, 280, 'n');
+	LCD_DisplayChar(82, 280, 'a');
+	LCD_DisplayChar(90, 280, 'l');
+	LCD_DisplayChar(100, 280, 'S');
+	LCD_DisplayChar(108, 280, 'c');
+	LCD_DisplayChar(114, 280, 'o');
+	LCD_DisplayChar(122, 280, 'r');
+	LCD_DisplayChar(128, 280, 'e');
+	LCD_DisplayChar(136, 280, ':');
+
+	LCD_DisplayChar(146, 280, score_tens);
+	LCD_DisplayChar(154, 280, score);
+	LCD_DisplayChar(162, 280, '0');
+	LCD_DisplayChar(170, 280, '0');
+
 }
 
 void disp_time(uint32_t time)
@@ -119,11 +195,10 @@ void disp_time(uint32_t time)
 
 	LCD_SetFont(&Font12x12);
 	LCD_SetTextColor(LCD_COLOR_WHITE);
-	LCD_DisplayChar(100, 160, min_char);
-	LCD_DisplayChar(114, 160, ':');
-	LCD_DisplayChar(124, 160, sec_tens_char);
-	LCD_DisplayChar(138, 160, sec_char);
-
+	LCD_DisplayChar(95, 144, min_char);
+	LCD_DisplayChar(109, 144, ':');
+	LCD_DisplayChar(119, 144, sec_tens_char);
+	LCD_DisplayChar(133, 144, sec_char);
 }
 
 block_t block_drop(block_t *block)
@@ -317,8 +392,8 @@ block_t block_create()
 		uint16_t temp[4][4] =
 			{{0,0,0,0},
 			{0,0,0,0},
-			{0,0,0,0},
-			{1,1,1,1}};
+			{1,1,1,1},
+			{0,0,0,0}};
 		for(int i = 0; i < 4; i++)
 		{
 			for(int j = 0; j < 4; j++)
@@ -510,7 +585,6 @@ map_t map_update(block_t *block, map_t* map)
 			}
 		}
 	}
-
 	return temp_map;
 }
 
@@ -539,7 +613,7 @@ map_t level_clear(map_t *map)
 	volatile map_t temp_map = *map;
 
 	uint8_t n = 0;
-	volatile uint8_t row_ind_cleared[4];
+	volatile uint8_t row_ind_cleared[4] = {0};
 	for(int j = 0; j < 13; j++)
 	{
 		volatile uint8_t sum = 0;
@@ -556,24 +630,19 @@ map_t level_clear(map_t *map)
 
 	for(int k = 0; k < n; k++)
 	{
-		for(int j = 12; j >= 0; j--)
+		for(int j = row_ind_cleared[k]; j >= 0; j--)
 		{
 			for(int i = 0; i < 10; i++)
 			{
-				if(j <= row_ind_cleared[k] && j > 0)
+				if(j == row_ind_cleared[k])
 				{
-					volatile uint8_t l = j - 1;
-					while(l > 0)
-					{
-						temp_map.map_mat[i][l + 1] = temp_map.map_mat[i][l];
-						temp_map.map_color[i][l + 1] = temp_map.map_color[i][l];
-						l--;
-					}
+					temp_map.map_mat[i][j] = OFF;
+					temp_map.map_color[i][j] = LCD_COLOR_BLACK;
 				}
-				if(j == 0)
+				else if(j < row_ind_cleared[k])
 				{
-					temp_map.map_mat[i][0] = OFF;
-					temp_map.map_color[i][0] = LCD_COLOR_BLACK;
+					temp_map.map_mat[i][j+1] = temp_map.map_mat[i][j];
+					temp_map.map_color[i][j+1] = temp_map.map_color[i][j];
 				}
 			}
 		}
@@ -600,18 +669,21 @@ void clear_map(map_t map)
 	{
 		for(int j = 0; j < 13; j++)
 		{
-				draw_block(map.x[i], map.y[j], LCD_COLOR_BLACK);
+			draw_block(map.x[i], map.y[j], LCD_COLOR_BLACK);
 		}
 	}
 }
 
-block_t block_rotate(block_t *block)
+block_t block_rotate(block_t *block, map_t *map)
 {
 	block_t temp_block = *block;
-	if(temp_block.name == O)
+	map_t temp_map = *map;
+
+	if(temp_block.name == O || temp_block.y[0] > LCD_PIXEL_HEIGHT)
 	{
 		return temp_block;
 	}
+
 
 	if(temp_block.name == I)
 	{
@@ -676,6 +748,14 @@ block_t block_rotate(block_t *block)
 				}
 			}
 		}
+	}
+	if(temp_block.x[3] > RIGHT_EDGE)
+	{
+		temp_block = block_move(&temp_block, &temp_map, LEFT);
+	}
+	else if(temp_block.x[0] < LEFT_EDGE)
+	{
+		temp_block = block_move(&temp_block, &temp_map, RIGHT);
 	}
 	return temp_block;
 }

@@ -114,13 +114,18 @@ void EXTI15_10_IRQHandler()
 		else
 		{
 			DetermineTouchPosition(&StaticTouchData);
-			if(StaticTouchData.x > 120)
+			if(StaticTouchData.x > 120 && StaticTouchData.y < 200)
 			{
 				game_move(RIGHT);
+				//game_rotate();
+			}
+			else if(StaticTouchData.x < 120 && StaticTouchData.y < 200)
+			{
+				game_move(LEFT);
 			}
 			else
 			{
-				game_move(LEFT);
+				game_rotate();
 			}
 		}
 	}

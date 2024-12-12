@@ -9,6 +9,10 @@
 static block_t block;
 static map_t map;
 static uint8_t game_started;
+static uint8_t singles = 0;
+static uint8_t doubles = 0;
+static uint8_t triples = 0;
+static uint8_t tetris = 0;
 
 uint8_t is_start_screen()
 {
@@ -48,6 +52,23 @@ void game_drop()
 
 		if(num_levels_cleared(&map) != 0)
 		{
+			if(num_levels_cleared(&map) == 1)
+			{
+				singles++;
+			}
+			else if(num_levels_cleared(&map) == 2)
+			{
+				doubles++;
+			}
+			else if(num_levels_cleared(&map) == 3)
+			{
+				triples++;
+			}
+			else if(num_levels_cleared(&map) == 4)
+			{
+				tetris++;
+			}
+
 			clear_map(map);
 			map = level_clear(&map);
 			draw_updated_map(map);
@@ -64,7 +85,7 @@ void game_drop()
 void game_rotate()
 {
 	clear_tetromino(block);
-	block = block_rotate(&block);
+	block = block_rotate(&block, &map);
 	draw_tetromino(block);
 }
 
@@ -89,7 +110,7 @@ uint8_t game_finished()
 
 void game_over()
 {
-	end_screen();
+	end_screen(singles, doubles, triples, tetris);
 	uint32_t time = HAL_GetTick();
 	disp_time(time);
 	while(1){}

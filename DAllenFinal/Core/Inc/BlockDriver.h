@@ -21,6 +21,7 @@
 #define RIGHT_EDGE 213
 #define LEFT_EDGE 6
 #define BOTTOM_ROW 293
+#define TOP_ROW 16
 
 #define LEFT 0
 #define RIGHT 1
@@ -60,12 +61,12 @@ void draw_tetromino(block_t block);
 void clear_tetromino(block_t block);
 void draw_updated_map(map_t map);
 void clear_map(map_t map);
-void end_screen();
+void end_screen(uint8_t singles, uint8_t doubles, uint8_t triples, uint8_t tetris);
 void disp_time(uint32_t time);
 
 block_t block_drop(block_t *block);
 block_t block_create();
-block_t block_rotate(block_t *block);
+block_t block_rotate(block_t *block, map_t *map);
 block_t block_move(block_t *block, map_t *map, uint8_t dir);
 
 uint8_t collision(block_t *block, map_t* map, uint8_t dir);
